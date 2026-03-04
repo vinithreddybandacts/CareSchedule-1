@@ -17,18 +17,10 @@
   <ItemGroup>
     <ProjectReference Include="..\CareSchedule.Shared\CareSchedule.Shared.csproj" />
     <ProjectReference Include="..\CareSchedule.Infrastructure\CareSchedule.Infrastructure.csproj" />
-    <ProjectReference Include="..\Modules\CareSchedule.Identity\CareSchedule.Identity.csproj" />
-    <ProjectReference Include="..\Modules\CareSchedule.MasterData\CareSchedule.MasterData.csproj" />
-    <ProjectReference Include="..\Modules\CareSchedule.Availability\CareSchedule.Availability.csproj" />
-    <ProjectReference Include="..\Modules\CareSchedule.Booking\CareSchedule.Booking.csproj" />
-    <ProjectReference Include="..\Modules\CareSchedule.Calendar\CareSchedule.Calendar.csproj" />
-    <ProjectReference Include="..\Modules\CareSchedule.Roster\CareSchedule.Roster.csproj" />
-    <ProjectReference Include="..\Modules\CareSchedule.Leave\CareSchedule.Leave.csproj" />
-    <ProjectReference Include="..\Modules\CareSchedule.Rules\CareSchedule.Rules.csproj" />
-    <ProjectReference Include="..\Modules\CareSchedule.Notification\CareSchedule.Notification.csproj" />
-    <ProjectReference Include="..\Modules\CareSchedule.Reports\CareSchedule.Reports.csproj" />
-    <ProjectReference Include="..\Modules\CareSchedule.Billing\CareSchedule.Billing.csproj" />
-    <ProjectReference Include="..\Modules\CareSchedule.Admin\CareSchedule.Admin.csproj" />
+    <ProjectReference Include="..\Models\CareSchedule.Models.csproj" />
+    <ProjectReference Include="..\DTOs\CareSchedule.DTOs.csproj" />
+    <ProjectReference Include="..\Services\CareSchedule.Services.csproj" />
+    <ProjectReference Include="..\Repositories\CareSchedule.Repositories.csproj" />
   </ItemGroup>
 
 </Project>
