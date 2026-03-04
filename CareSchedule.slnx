@@ -1,18 +1,4 @@
 <Solution>
-  <Folder Name="/Modules/">
-    <Project Path="Modules/CareSchedule.Admin/CareSchedule.Admin.csproj" />
-    <Project Path="Modules/CareSchedule.Availability/CareSchedule.Availability.csproj" />
-    <Project Path="Modules/CareSchedule.Billing/CareSchedule.Billing.csproj" />
-    <Project Path="Modules/CareSchedule.Booking/CareSchedule.Booking.csproj" />
-    <Project Path="Modules/CareSchedule.Calendar/CareSchedule.Calendar.csproj" />
-    <Project Path="Modules/CareSchedule.Identity/CareSchedule.Identity.csproj" />
-    <Project Path="Modules/CareSchedule.Leave/CareSchedule.Leave.csproj" />
-    <Project Path="Modules/CareSchedule.MasterData/CareSchedule.MasterData.csproj" />
-    <Project Path="Modules/CareSchedule.Notification/CareSchedule.Notification.csproj" />
-    <Project Path="Modules/CareSchedule.Reports/CareSchedule.Reports.csproj" />
-    <Project Path="Modules/CareSchedule.Roster/CareSchedule.Roster.csproj" />
-    <Project Path="Modules/CareSchedule.Rules/CareSchedule.Rules.csproj" />
-  </Folder>
   <Project Path="CareSchedule.API/CareSchedule.API.csproj" />
   <Project Path="CareSchedule.Infrastructure/CareSchedule.Infrastructure.csproj" />
   <Project Path="CareSchedule.Shared/CareSchedule.Shared.csproj" />
