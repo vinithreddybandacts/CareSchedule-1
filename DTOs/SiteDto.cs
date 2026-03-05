@@ -42,12 +42,4 @@ namespace CareSchedule.DTOs
         public string SortBy { get; set; } = "name"; // name | timezone | status
         public string SortDir { get; set; } = "asc"; // asc | desc
     }
-
-    public class PagedResult<T>
-    {
-        public IReadOnlyList<T> Items { get; set; } = Array.Empty<T>();
-        public int Total { get; set; }
-        public int Page { get; set; }
-        public int PageSize { get; set; }
-    }
 }

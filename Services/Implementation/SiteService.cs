@@ -15,29 +15,29 @@ namespace CareSchedule.Services
             _repo = repo;
         }
 
-        public async Task<PagedResult<SiteDto>> SearchAsync(SiteSearchQuery query, CancellationToken ct = default)
+        public List<SiteDto> SearchSite(SiteSearchQuery query)
         {
-            var (items, total) = await _repo.SearchAsync(
-                query.Name, query.Status,
-                query.Page, query.PageSize,
-                query.SortBy, query.SortDir, ct);
+            var (items, _) = _repo.SearchAsync(
+                query.Name,
+                query.Status,
+                query.Page,
+                query.PageSize,
+                query.SortBy,
+                query.SortDir,
+                CancellationToken.None
+            ).GetAwaiter().GetResult();
 
-            return new PagedResult<SiteDto>
-            {
-                Items = items.Select(Map).ToList(),
-                Total = total,
-                Page = query.Page <= 0 ? 1 : query.Page,
-                PageSize = query.PageSize <= 0 ? 25 : query.PageSize
-            };
+            return items.Select(Map).ToList();
         }
 
-        public async Task<SiteDto?> GetAsync(int id, CancellationToken ct = default)
+        public SiteDto? GetSite(int id)
         {
-            var site = await _repo.GetAsync(id, ct);
+            var site = _repo.GetAsync(id, CancellationToken.None)
+                            .GetAwaiter().GetResult();
             return site is null ? null : Map(site);
         }
 
-        public async Task<SiteDto> CreateAsync(SiteCreateDto dto, CancellationToken ct = default)
+        public SiteDto CreateSite(SiteCreateDto dto)
         {
             Validate(dto);
 
@@ -49,13 +49,17 @@ namespace CareSchedule.Services
                 Status = "Active"
             };
 
-            entity = await _repo.CreateAsync(entity, ct);
+            entity = _repo.CreateAsync(entity, CancellationToken.None)
+                          .GetAwaiter().GetResult();
+
             return Map(entity);
         }
 
-        public async Task<SiteDto> UpdateAsync(int id, SiteUpdateDto dto, CancellationToken ct = default)
+        public SiteDto UpdateSite(int id, SiteUpdateDto dto)
         {
-            var entity = await _repo.GetAsync(id, ct) ?? throw new KeyNotFoundException("Site not found.");
+            var entity = _repo.GetAsync(id, CancellationToken.None)
+                              .GetAwaiter().GetResult()
+                        ?? throw new KeyNotFoundException("Site not found.");
 
             if (!string.IsNullOrWhiteSpace(dto.Name))
                 entity.Name = dto.Name.Trim();
@@ -69,24 +73,38 @@ namespace CareSchedule.Services
                 entity.Timezone = dto.Timezone;
             }
 
-            await _repo.UpdateAsync(entity, ct);
+            _repo.UpdateAsync(entity, CancellationToken.None)
+                 .GetAwaiter().GetResult();
+
             return Map(entity);
         }
 
-        public async Task DeactivateAsync(int id, CancellationToken ct = default)
+        public void DeactivateSite(int id)
         {
-            var entity = await _repo.GetAsync(id, ct) ?? throw new KeyNotFoundException("Site not found.");
+            var entity = _repo.GetAsync(id, CancellationToken.None)
+                              .GetAwaiter().GetResult()
+                        ?? throw new KeyNotFoundException("Site not found.");
+
             if (entity.Status == "Inactive") return;
+
             entity.Status = "Inactive";
-            await _repo.UpdateAsync(entity, ct);
+
+            _repo.UpdateAsync(entity, CancellationToken.None)
+                 .GetAwaiter().GetResult();
         }
 
-        public async Task ActivateAsync(int id, CancellationToken ct = default)
+        public void ActivateSite(int id)
         {
-            var entity = await _repo.GetAsync(id, ct) ?? throw new KeyNotFoundException("Site not found.");
+            var entity = _repo.GetAsync(id, CancellationToken.None)
+                              .GetAwaiter().GetResult()
+                        ?? throw new KeyNotFoundException("Site not found.");
+
             if (entity.Status == "Active") return;
+
             entity.Status = "Active";
-            await _repo.UpdateAsync(entity, ct);
+
+            _repo.UpdateAsync(entity, CancellationToken.None)
+                 .GetAwaiter().GetResult();
         }
 
         // --- helpers ---
