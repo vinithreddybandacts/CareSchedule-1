@@ -7,6 +7,7 @@ namespace CareSchedule.API.Controllers
 {
     [ApiController]
     [Route("api/masterdata/sites")]
+    [Produces("application/json")]
     public class SitesController : ControllerBase
     {
         private readonly ISiteService _service;
@@ -16,37 +17,41 @@ namespace CareSchedule.API.Controllers
             _service = service;
         }
 
-        // GET /api/masterdata/sites?name=&status=&page=&pageSize=&sortBy=&sortDir=
+        // GET /api/masterdata/sites
+        
         [HttpGet]
-        public async Task<IActionResult> Search([FromQuery] SiteSearchQuery query, CancellationToken ct)
+        public IActionResult Search([FromQuery] SiteSearchQuery query)
         {
-            var result = await _service.SearchAsync(query, ct);
-            return Ok(ApiResponse<object>.Ok(new
-            {
-                items = result.Items,
-                total = result.Total,
-                page = result.Page,
-                pageSize = result.PageSize
-            }));
+            var items = _service.SearchSite(query);
+            return Ok(ApiResponse<object>.Ok(items));
         }
 
         // GET /api/masterdata/sites/{id}
         [HttpGet("{id:int}")]
-        public async Task<IActionResult> Get(int id, CancellationToken ct)
+        [ProducesResponseType(typeof(ApiResponse<SiteDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
+        public ActionResult<ApiResponse<SiteDto>> Get(int id)
         {
-            var site = await _service.GetAsync(id, ct);
-            if (site is null) return NotFound(ApiResponse<object>.Fail(new { code = "RESOURCE_NOT_FOUND" }, "Site not found."));
-            return Ok(ApiResponse<object>.Ok(site));
+            var site = _service.GetSite(id);
+            return site is null
+                ? NotFound(ApiResponse<object>.Fail(new { code = "RESOURCE_NOT_FOUND" }, "Site not found."))
+                : Ok(ApiResponse<SiteDto>.Ok(site));
         }
 
         // POST /api/masterdata/sites
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] SiteCreateDto dto, CancellationToken ct)
+        [ProducesResponseType(typeof(ApiResponse<SiteDto>), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
+        public ActionResult<ApiResponse<SiteDto>> Create([FromBody] SiteCreateDto dto)
         {
+            if (dto is null)
+                return BadRequest(ApiResponse<object>.Fail(new { code = "BAD_REQUEST" }, "Request body is required."));
+
             try
             {
-                var created = await _service.CreateAsync(dto, ct);
-                return CreatedAtAction(nameof(Get), new { id = created.SiteId }, ApiResponse<object>.Ok(created, "Site created."));
+                var created = _service.CreateSite(dto);
+                return CreatedAtAction(nameof(Get), new { id = created.SiteId },
+                    ApiResponse<SiteDto>.Ok(created, "Site created."));
             }
             catch (ArgumentException ex)
             {
@@ -56,12 +61,18 @@ namespace CareSchedule.API.Controllers
 
         // PUT /api/masterdata/sites/{id}
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> Update(int id, [FromBody] SiteUpdateDto dto, CancellationToken ct)
+        [ProducesResponseType(typeof(ApiResponse<SiteDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
+        public ActionResult<ApiResponse<SiteDto>> Update(int id, [FromBody] SiteUpdateDto dto)
         {
+            if (dto is null)
+                return BadRequest(ApiResponse<object>.Fail(new { code = "BAD_REQUEST" }, "Request body is required."));
+
             try
             {
-                var updated = await _service.UpdateAsync(id, dto, ct);
-                return Ok(ApiResponse<object>.Ok(updated, "Site updated."));
+                var updated = _service.UpdateSite(id, dto);
+                return Ok(ApiResponse<SiteDto>.Ok(updated, "Site updated."));
             }
             catch (KeyNotFoundException)
             {
@@ -73,29 +84,31 @@ namespace CareSchedule.API.Controllers
             }
         }
 
-        // DELETE /api/masterdata/sites/{id}   (soft: Status -> Inactive)
+        // DELETE /api/masterdata/sites/{id} (soft: set Status -> Inactive)
         [HttpDelete("{id:int}")]
-        public async Task<IActionResult> Deactivate(int id, CancellationToken ct)
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
+        public ActionResult<ApiResponse<object>> DeactivateSite(int id)
         {
-            try
-            {
-                await _service.DeactivateAsync(id, ct);
-                return Ok(ApiResponse<object>.Ok(new { id }, "Site deactivated."));
-            }
-            catch (KeyNotFoundException)
-            {
-                return NotFound(ApiResponse<object>.Fail(new { code = "RESOURCE_NOT_FOUND" }, "Site not found."));
-            }
+            return HandleStatusChange(id, _service.DeactivateSite, "Site deactivated.");
         }
 
         // POST /api/masterdata/sites/{id}/activate
         [HttpPost("{id:int}/activate")]
-        public async Task<IActionResult> Activate(int id, CancellationToken ct)
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
+        public ActionResult<ApiResponse<object>> ActivateSite(int id)
+        {
+            return HandleStatusChange(id, _service.ActivateSite, "Site activated.");
+        }
+
+        // Helper to reduce duplication in Activate/Deactivate
+        private ActionResult<ApiResponse<object>> HandleStatusChange(int id, Action<int> action, string message)
         {
             try
             {
-                await _service.ActivateAsync(id, ct);
-                return Ok(ApiResponse<object>.Ok(new { id }, "Site activated."));
+                action(id);
+                return Ok(ApiResponse<object>.Ok(new { id }, message));
             }
             catch (KeyNotFoundException)
             {
