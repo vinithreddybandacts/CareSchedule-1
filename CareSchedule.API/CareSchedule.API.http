@@ -1,0 +1,6 @@
+@CareSchedule.API_HostAddress = http://localhost:5159
+
+GET {{CareSchedule.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
