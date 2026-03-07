@@ -36,65 +36,30 @@ namespace CareSchedule.API.Controllers
         [HttpPost]
         public IActionResult Create([FromBody] ProviderCreateDto dto)
         {
-            if (dto is null)
-                return BadRequest(ApiResponse<object>.Fail(new { code = "BAD_REQUEST" }, "Request body is required."));
-
-            try
-            {
-                var created = _service.CreateProvider(dto);
-                return CreatedAtAction(nameof(Get), new { id = created.ProviderId },
-                    ApiResponse<ProviderDto>.Ok(created, "Provider created."));
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(ApiResponse<object>.Fail(new { code = "BAD_REQUEST" }, ex.Message));
-            }
+            var created = _service.CreateProvider(dto);
+            return CreatedAtAction(nameof(Get), new { id = created.ProviderId },
+                ApiResponse<ProviderDto>.Ok(created, "Provider created."));
         }
 
         [HttpPut("{id:int}")]
         public IActionResult Update(int id, [FromBody] ProviderUpdateDto dto)
         {
-            if (dto is null)
-                return BadRequest(ApiResponse<object>.Fail(new { code = "BAD_REQUEST" }, "Request body is required."));
-
-            try
-            {
-                var updated = _service.UpdateProvider(id, dto);
-                return Ok(ApiResponse<ProviderDto>.Ok(updated, "Provider updated."));
-            }
-            catch (KeyNotFoundException)
-            {
-                return NotFound(ApiResponse<object>.Fail(new { code = "RESOURCE_NOT_FOUND" }, "Provider not found."));
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(ApiResponse<object>.Fail(new { code = "BAD_REQUEST" }, ex.Message));
-            }
+            var updated = _service.UpdateProvider(id, dto);
+            return Ok(ApiResponse<ProviderDto>.Ok(updated, "Provider updated."));
         }
 
         [HttpDelete("{id:int}")]
         public IActionResult Deactivate(int id)
         {
-            return HandleStatusChange(id, _service.DeactivateProvider, "Provider deactivated.");
+            _service.DeactivateProvider(id);
+            return Ok(ApiResponse<object>.Ok(new { id }, "Provider deactivated."));
         }
 
         [HttpPost("{id:int}/activate")]
         public IActionResult Activate(int id)
         {
-            return HandleStatusChange(id, _service.ActivateProvider, "Provider activated.");
-        }
-
-        private IActionResult HandleStatusChange(int id, Action<int> action, string message)
-        {
-            try
-            {
-                action(id);
-                return Ok(ApiResponse<object>.Ok(new { id }, message));
-            }
-            catch (KeyNotFoundException)
-            {
-                return NotFound(ApiResponse<object>.Fail(new { code = "RESOURCE_NOT_FOUND" }, "Provider not found."));
-            }
+            _service.ActivateProvider(id);
+            return Ok(ApiResponse<object>.Ok(new { id }, "Provider activated."));
         }
     }
 }

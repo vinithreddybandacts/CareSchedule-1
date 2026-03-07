@@ -1,3 +1,4 @@
+using CareSchedule.API.Middleware;
 using CareSchedule.Repositories.Implementation;
 using CareSchedule.Repositories.Interface;
 using CareSchedule.Services;
@@ -31,6 +32,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
+app.UseMiddleware<GlobalExceptionMiddleware>();
 app.UseHttpsRedirection();
 app.MapControllers();
 app.Run();

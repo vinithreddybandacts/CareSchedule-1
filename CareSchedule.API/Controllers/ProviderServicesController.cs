@@ -20,19 +20,9 @@ namespace CareSchedule.API.Controllers
         [HttpPost("provider-services")]
         public IActionResult Assign([FromBody] ProviderServiceCreateDto dto)
         {
-            if (dto is null)
-                return BadRequest(ApiResponse<object>.Fail(new { code = "BAD_REQUEST" }, "Request body is required."));
-
-            try
-            {
-                var created = _service.AssignServiceToProvider(dto);
-                return CreatedAtAction(nameof(GetServicesByProvider), new { providerId = created.ProviderId },
-                    ApiResponse<ProviderServiceDto>.Ok(created, "Service assigned to provider."));
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(ApiResponse<object>.Fail(new { code = "BAD_REQUEST" }, ex.Message));
-            }
+            var created = _service.AssignServiceToProvider(dto);
+            return CreatedAtAction(nameof(GetServicesByProvider), new { providerId = created.ProviderId },
+                ApiResponse<ProviderServiceDto>.Ok(created, "Service assigned to provider."));
         }
 
         [HttpGet("providers/{providerId:int}/services")]
@@ -52,15 +42,9 @@ namespace CareSchedule.API.Controllers
         [HttpDelete("provider-services/{id:int}")]
         public IActionResult Remove(int id)
         {
-            try
-            {
-                _service.RemoveMapping(id);
-                return Ok(ApiResponse<object>.Ok(new { id }, "Mapping removed."));
-            }
-            catch (KeyNotFoundException)
-            {
-                return NotFound(ApiResponse<object>.Fail(new { code = "RESOURCE_NOT_FOUND" }, "Mapping not found."));
-            }
+            _service.RemoveMapping(id);
+            return Ok(ApiResponse<object>.Ok(new { id }, "Mapping removed."));
         }
     }
 }
+
