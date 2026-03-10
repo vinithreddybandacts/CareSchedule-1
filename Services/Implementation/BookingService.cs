@@ -331,6 +331,26 @@ namespace CareSchedule.Services.Implementation
             return new DateTime(date.Year, date.Month, date.Day, time.Hour, time.Minute, 0, DateTimeKind.Utc);
         }
 
+         public void MarkCheckedIn(int appointmentId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void MarkComplete(int appointmentId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void MarkNoShow(int appointmentId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void CancelByProvider(int appointmentId)
+        {
+            throw new NotImplementedException();
+        }
+
         private static AppointmentResponseDto Map(Appointment a)
         {
             return new AppointmentResponseDto

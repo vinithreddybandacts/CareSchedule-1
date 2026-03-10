@@ -55,5 +55,26 @@ namespace CareSchedule.API.Controllers
             var item = _service.GetById(appointmentId);
             return ApiResponse<AppointmentResponseDto>.Ok(item, "Appointment fetched.");
         }
+
+        [HttpPatch("{appointmentId:int}/checked-in")]
+        public ActionResult<ApiResponse<object>> MarkCheckedIn(int appointmentId)
+        {
+            _service.MarkCheckedIn(appointmentId);
+            return ApiResponse<object>.Ok(new { appointmentId }, "Appointment checked in.");
+        }
+
+        [HttpPatch("{appointmentId:int}/complete")]
+        public ActionResult<ApiResponse<object>> MarkComplete(int appointmentId)
+        {
+            _service.MarkComplete(appointmentId);
+            return ApiResponse<object>.Ok(new { appointmentId }, "Appointment completed.");
+        }
+
+        [HttpPatch("{appointmentId:int}/no-show")]
+        public ActionResult<ApiResponse<object>> MarkNoShow(int appointmentId)
+        {
+            _service.MarkNoShow(appointmentId);
+            return ApiResponse<object>.Ok(new { appointmentId }, "Appointment marked no-show.");
+        }
     }
 }

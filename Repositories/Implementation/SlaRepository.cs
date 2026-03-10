@@ -1,33 +1,38 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using CareSchedule.Models;
 using CareSchedule.Infrastructure.Data;
 using CareSchedule.Repositories.Interface;
 
 namespace CareSchedule.Repositories.Implementation
 {
-    public class NotificationRepository : INotificationRepository
+    public class SlaRepository : ISlaRepository
     {
         private readonly CareScheduleContext _db;
-        public NotificationRepository(CareScheduleContext db) { _db = db; }
 
-        public void Add(Notification entity) => _db.Notifications.Add(entity);
+        public SlaRepository(CareScheduleContext db)
+        {
+            _db = db;
+        }
 
-        public Notification? GetById(int notificationId)
+        public void Add(Sla entity)
         {
             throw new NotImplementedException();
         }
 
-        public IEnumerable<Notification> GetByUserId(int userId)
+        public void Update(Sla entity)
         {
             throw new NotImplementedException();
         }
 
-        public void Update(Notification entity)
+        public Sla? GetById(int slaId)
         {
             throw new NotImplementedException();
         }
 
+        public IEnumerable<Sla> Search(string? scope, string? status)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

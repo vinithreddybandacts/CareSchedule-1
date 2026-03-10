@@ -73,6 +73,21 @@ namespace CareSchedule.Services.Implementation
             if (e.Status != "Active") { e.Status = "Active"; _repo.Update(e); }
         }
 
+         public void LockUser(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void UnlockUser(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ResetPassword(int id)
+        {
+            throw new NotImplementedException();
+        }
+        
         private static UserDto Map(User u) => new()
         {
             UserId = u.UserId,

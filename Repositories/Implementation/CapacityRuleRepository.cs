@@ -1,33 +1,38 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using CareSchedule.Models;
 using CareSchedule.Infrastructure.Data;
 using CareSchedule.Repositories.Interface;
 
 namespace CareSchedule.Repositories.Implementation
 {
-    public class NotificationRepository : INotificationRepository
+    public class CapacityRuleRepository : ICapacityRuleRepository
     {
         private readonly CareScheduleContext _db;
-        public NotificationRepository(CareScheduleContext db) { _db = db; }
 
-        public void Add(Notification entity) => _db.Notifications.Add(entity);
+        public CapacityRuleRepository(CareScheduleContext db)
+        {
+            _db = db;
+        }
 
-        public Notification? GetById(int notificationId)
+        public void Add(CapacityRule entity)
         {
             throw new NotImplementedException();
         }
 
-        public IEnumerable<Notification> GetByUserId(int userId)
+        public void Update(CapacityRule entity)
         {
             throw new NotImplementedException();
         }
 
-        public void Update(Notification entity)
+        public CapacityRule? GetById(int ruleId)
         {
             throw new NotImplementedException();
         }
 
+        public IEnumerable<CapacityRule> Search(string? scope, string? status)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
