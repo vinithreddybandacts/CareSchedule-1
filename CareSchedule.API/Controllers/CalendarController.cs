@@ -1,0 +1,40 @@
+using Microsoft.AspNetCore.Mvc;
+using CareSchedule.API.Contracts;
+using CareSchedule.DTOs;
+using CareSchedule.Services.Interface;
+
+namespace CareSchedule.API.Controllers
+{
+    [ApiController]
+    [Route("calendar")]
+    public class CalendarController : ControllerBase
+    {
+        private readonly ICalendarService _service;
+
+        public CalendarController(ICalendarService service)
+        {
+            _service = service;
+        }
+
+        [HttpGet]
+        public ActionResult<ApiResponse<IEnumerable<CalendarEventResponseDto>>> Get(
+            [FromQuery] int? providerId,
+            [FromQuery] int? siteId,
+            [FromQuery] string? date)
+        {
+            if (providerId.HasValue)
+            {
+                var list = _service.GetByProvider(providerId.Value, date ?? "");
+                return ApiResponse<IEnumerable<CalendarEventResponseDto>>.Ok(list, "Calendar events fetched.");
+            }
+
+            if (siteId.HasValue)
+            {
+                var list = _service.GetBySite(siteId.Value, date ?? "");
+                return ApiResponse<IEnumerable<CalendarEventResponseDto>>.Ok(list, "Calendar events fetched.");
+            }
+
+            return BadRequest(ApiResponse<object>.Fail(new { code = "BAD_REQUEST" }, "providerId or siteId is required."));
+        }
+    }
+}

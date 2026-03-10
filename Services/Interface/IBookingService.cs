@@ -10,5 +10,9 @@ namespace CareSchedule.Services.Interface
         void Cancel(int appointmentId, CancelAppointmentRequestDto dto);
         AppointmentResponseDto GetById(int appointmentId);
         IEnumerable<AppointmentResponseDto> Search(AppointmentSearchRequestDto dto);
+        void MarkCheckedIn(int appointmentId);
+        void MarkComplete(int appointmentId);
+        void MarkNoShow(int appointmentId);
+        void CancelByProvider(int appointmentId);
     }
 }

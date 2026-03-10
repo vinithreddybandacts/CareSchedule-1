@@ -48,5 +48,26 @@ namespace CareSchedule.API.Controllers
             _service.ActivateUser(id);
             return Ok(ApiResponse<object>.Ok(new { id }, "User activated."));
         }
+
+         [HttpPatch("{id:int}/lock")]
+        public ActionResult<ApiResponse<object>> Lock(int id)
+        {
+            _service.LockUser(id);
+            return Ok(ApiResponse<object>.Ok(new { id }, "User locked."));
+        }
+
+        [HttpPatch("{id:int}/unlock")]
+        public ActionResult<ApiResponse<object>> Unlock(int id)
+        {
+            _service.UnlockUser(id);
+            return Ok(ApiResponse<object>.Ok(new { id }, "User unlocked."));
+        }
+
+        [HttpPatch("{id:int}/reset-password")]
+        public ActionResult<ApiResponse<object>> ResetPassword(int id)
+        {
+            _service.ResetPassword(id);
+            return Ok(ApiResponse<object>.Ok(new { id }, "Password reset."));
+        }
     }
 }

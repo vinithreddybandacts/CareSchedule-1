@@ -66,6 +66,52 @@ builder.Services.AddScoped<IProviderMasterService, ProviderMasterService>();
 builder.Services.AddScoped<IServiceMasterService, ServiceMasterService>();
 builder.Services.AddScoped<IProviderServiceMappingService, ProviderServiceMappingService>();
 
+
+// Waitlist
+builder.Services.AddScoped<IWaitlistRepository, WaitlistRepository>();
+builder.Services.AddScoped<IWaitlistService, WaitlistService>();
+
+// CheckIn
+builder.Services.AddScoped<ICheckInRepository, CheckInRepository>();
+builder.Services.AddScoped<ICheckInService, CheckInService>();
+
+// Outcome
+builder.Services.AddScoped<IOutcomeRepository, OutcomeRepository>();
+builder.Services.AddScoped<IOutcomeService, OutcomeService>();
+
+// Calendar
+builder.Services.AddScoped<IResourceHoldRepository, ResourceHoldRepository>();
+builder.Services.AddScoped<ICalendarService, CalendarService>();
+
+// Notification
+builder.Services.AddScoped<INotificationService, NotificationService>();
+
+// Roster
+builder.Services.AddScoped<IShiftTemplateRepository, ShiftTemplateRepository>();
+builder.Services.AddScoped<IRosterRepository, RosterRepository>();
+builder.Services.AddScoped<IRosterAssignmentRepository, RosterAssignmentRepository>();
+builder.Services.AddScoped<IOnCallCoverageRepository, OnCallCoverageRepository>();
+builder.Services.AddScoped<IRosterService, RosterService>();
+
+// Leave
+builder.Services.AddScoped<ILeaveRequestRepository, LeaveRequestRepository>();
+builder.Services.AddScoped<ILeaveImpactRepository, LeaveImpactRepository>();
+builder.Services.AddScoped<ILeaveService, LeaveService>();
+
+// Rules
+builder.Services.AddScoped<ICapacityRuleRepository, CapacityRuleRepository>();
+builder.Services.AddScoped<ISlaRepository, SlaRepository>();
+builder.Services.AddScoped<IRulesService, RulesService>();
+
+// Reports
+builder.Services.AddScoped<IOpsReportRepository, OpsReportRepository>();
+builder.Services.AddScoped<IReportService, ReportService>();
+
+// Billing
+builder.Services.AddScoped<IChargeRefRepository, ChargeRefRepository>();
+builder.Services.AddScoped<IBillingService, BillingService>();
+
+
 var app = builder.Build();
 
 app.UseMiddleware<GlobalExceptionMiddleware>();

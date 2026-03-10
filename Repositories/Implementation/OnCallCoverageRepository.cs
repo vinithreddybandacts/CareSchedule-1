@@ -1,33 +1,38 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using CareSchedule.Models;
 using CareSchedule.Infrastructure.Data;
 using CareSchedule.Repositories.Interface;
 
 namespace CareSchedule.Repositories.Implementation
 {
-    public class NotificationRepository : INotificationRepository
+    public class OnCallCoverageRepository : IOnCallCoverageRepository
     {
         private readonly CareScheduleContext _db;
-        public NotificationRepository(CareScheduleContext db) { _db = db; }
 
-        public void Add(Notification entity) => _db.Notifications.Add(entity);
+        public OnCallCoverageRepository(CareScheduleContext db)
+        {
+            _db = db;
+        }
 
-        public Notification? GetById(int notificationId)
+        public void Add(OnCallCoverage entity)
         {
             throw new NotImplementedException();
         }
 
-        public IEnumerable<Notification> GetByUserId(int userId)
+        public void Update(OnCallCoverage entity)
         {
             throw new NotImplementedException();
         }
 
-        public void Update(Notification entity)
+        public OnCallCoverage? GetById(int onCallId)
         {
             throw new NotImplementedException();
         }
 
+        public IEnumerable<OnCallCoverage> Search(int? siteId, DateOnly? date)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
