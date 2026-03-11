@@ -12,7 +12,11 @@ namespace CareSchedule.Repositories.Implementation
         private readonly CareScheduleContext _db;
         public NotificationRepository(CareScheduleContext db) { _db = db; }
 
-        public void Add(Notification entity) => _db.Notifications.Add(entity);
+        public void Add(Notification entity)
+        {
+            _db.Notifications.Add(entity);
+            _db.SaveChanges();
+        }
 
         public Notification? GetById(int notificationId)
         {

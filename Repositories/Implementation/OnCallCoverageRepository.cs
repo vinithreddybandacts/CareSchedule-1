@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using CareSchedule.Models;
 using CareSchedule.Infrastructure.Data;
 using CareSchedule.Repositories.Interface;
+using Microsoft.EntityFrameworkCore;
 
 namespace CareSchedule.Repositories.Implementation
 {
@@ -17,22 +18,40 @@ namespace CareSchedule.Repositories.Implementation
 
         public void Add(OnCallCoverage entity)
         {
-            throw new NotImplementedException();
+            _db.OnCallCoverages.Add(entity);
+            _db.SaveChanges();
         }
 
         public void Update(OnCallCoverage entity)
         {
-            throw new NotImplementedException();
+            _db.OnCallCoverages.Update(entity);
+            _db.SaveChanges();
         }
 
         public OnCallCoverage? GetById(int onCallId)
         {
-            throw new NotImplementedException();
+            return _db.OnCallCoverages
+                .AsNoTracking()
+                .FirstOrDefault(o => o.OnCallId == onCallId);
         }
 
         public IEnumerable<OnCallCoverage> Search(int? siteId, DateOnly? date)
         {
-            throw new NotImplementedException();
+            var q = _db.OnCallCoverages.AsNoTracking().AsQueryable();
+
+            if (siteId.HasValue)
+            {
+                var id = siteId.Value;
+                q = q.Where(o => o.SiteId == id);
+            }
+
+            if (date.HasValue)
+            {
+                var d = date.Value;
+                q = q.Where(o => o.Date == d);
+            }
+
+            return q.ToList();
         }
     }
 }
