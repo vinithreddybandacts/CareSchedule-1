@@ -6,6 +6,10 @@
 # dotenv files
 .env
 
+# local configuration used by developers.  Contains sensitive connection strings and
+# should never be committed or shared.
+appsettings.Local.json
+
 # User-specific files
 *.rsuser
 *.suo

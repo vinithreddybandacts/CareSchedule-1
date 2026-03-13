@@ -5,14 +5,20 @@ using CareSchedule.Services.Implementation;
 using CareSchedule.Services.Interface;
 using CareSchedule.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
-using CareSchedule.API.Middleware;
 using CareSchedule.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// load an local settings file that is ignored by source control
+builder.Configuration.AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: true);
+
 builder.Services.AddControllers();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+if (string.IsNullOrWhiteSpace(connectionString))
+{
+    throw new InvalidOperationException("Database connection string not configured. \n Set ConnectionStrings:DefaultConnection in appsettings.Local.json.");
+}
 builder.Services.AddDbContext<CareScheduleContext>(options =>
     options.UseSqlServer(connectionString));
 
