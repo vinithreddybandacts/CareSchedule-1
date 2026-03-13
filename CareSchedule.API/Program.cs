@@ -5,7 +5,6 @@ using CareSchedule.Services.Implementation;
 using CareSchedule.Services.Interface;
 using CareSchedule.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
-using CareSchedule.API.Middleware;
 using CareSchedule.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
