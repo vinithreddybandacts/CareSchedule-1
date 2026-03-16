@@ -16,6 +16,21 @@ namespace CareSchedule.API.Controllers
             _service = service;
         }
 
+        [HttpGet]
+        public ActionResult<ApiResponse<IEnumerable<CapacityRuleResponseDto>>> Search(
+            [FromQuery] string? scope, [FromQuery] string? status)
+        {
+            var list = _service.SearchCapacityRules(scope, status);
+            return ApiResponse<IEnumerable<CapacityRuleResponseDto>>.Ok(list, "Capacity rules fetched.");
+        }
+
+        [HttpGet("{ruleId:int}")]
+        public ActionResult<ApiResponse<CapacityRuleResponseDto>> Get(int ruleId)
+        {
+            var result = _service.GetCapacityRule(ruleId);
+            return ApiResponse<CapacityRuleResponseDto>.Ok(result);
+        }
+
         [HttpPost]
         public ActionResult<ApiResponse<CapacityRuleResponseDto>> Create([FromBody] CreateCapacityRuleDto dto)
         {
@@ -28,6 +43,13 @@ namespace CareSchedule.API.Controllers
         {
             var result = _service.UpdateCapacityRule(ruleId, dto);
             return ApiResponse<CapacityRuleResponseDto>.Ok(result, "Capacity rule updated.");
+        }
+
+        [HttpDelete("{ruleId:int}")]
+        public ActionResult<ApiResponse<object>> Deactivate(int ruleId)
+        {
+            _service.DeactivateCapacityRule(ruleId);
+            return ApiResponse<object>.Ok(new { ruleId }, "Capacity rule deactivated.");
         }
     }
 }
