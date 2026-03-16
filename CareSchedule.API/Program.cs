@@ -14,6 +14,7 @@ builder.Configuration.AddJsonFile("appsettings.Local.json", optional: true, relo
 
 builder.Services.AddControllers();
 
+
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 if (string.IsNullOrWhiteSpace(connectionString))
 {
@@ -30,7 +31,6 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
 builder.Services.AddScoped<IAppointmentChangeRepository, AppointmentChangeRepository>();
 builder.Services.AddScoped<IPublishedSlotBookingRepository, PublishedSlotBookingRepository>();
-builder.Services.AddScoped<ICalendarEventRepository, CalendarEventRepository>();
 builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
 builder.Services.AddScoped<IReminderScheduleRepository, ReminderScheduleRepository>();
 
@@ -39,11 +39,12 @@ builder.Services.AddScoped<IBookingService, BookingService>();
 
 
 // Repositories
+// Repositories
 builder.Services.AddScoped<IAvailabilityTemplateRepository, AvailabilityTemplateRepository>();
 builder.Services.AddScoped<IAvailabilityBlockRepository, AvailabilityBlockRepository>();
 builder.Services.AddScoped<IPublishedSlotRepository, PublishedSlotRepository>();
 builder.Services.AddScoped<ICalendarEventRepository, CalendarEventRepository>();
-
+builder.Services.AddScoped<IReminderScheduleRepository, ReminderScheduleRepository>();
 // Service
 builder.Services.AddScoped<IAvailabilityService, AvailabilityService>();
 
@@ -81,6 +82,7 @@ builder.Services.AddScoped<IWaitlistService, WaitlistService>();
 builder.Services.AddScoped<ICheckInRepository, CheckInRepository>();
 builder.Services.AddScoped<ICheckInService, CheckInService>();
 
+
 // Outcome
 builder.Services.AddScoped<IOutcomeRepository, OutcomeRepository>();
 builder.Services.AddScoped<IOutcomeService, OutcomeService>();
@@ -91,6 +93,7 @@ builder.Services.AddScoped<ICalendarService, CalendarService>();
 
 // Notification
 builder.Services.AddScoped<INotificationService, NotificationService>();
+
 
 // Roster
 builder.Services.AddScoped<IShiftTemplateRepository, ShiftTemplateRepository>();
@@ -121,15 +124,12 @@ builder.Services.AddScoped<IBillingService, BillingService>();
 var app = builder.Build();
 
 app.UseMiddleware<GlobalExceptionMiddleware>();
-
-app.MapControllers();
+app.UseHttpsRedirection();
 
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
 
-app.UseMiddleware<GlobalExceptionMiddleware>();
-app.UseHttpsRedirection();
 app.MapControllers();
 app.Run();

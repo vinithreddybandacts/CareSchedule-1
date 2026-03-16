@@ -794,6 +794,66 @@
         }
       ]
     }
+    ,
+    {
+      "name": "16. Resource Holds",
+      "item": [
+        {
+          "name": "Create Resource Hold",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+            "pm.test('created resource hold', () => pm.expect(pm.response.code).to.equal(200));",
+            "const json = pm.response.json();",
+            "pm.environment.set('resource_hold_id', json.data.holdId);",
+            "pm.test('response indicates success', () => pm.expect(json.success).to.be.true);"
+          ]}}],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"resourceType\": \"Room\",\n  \"resourceId\": {{room_id}},\n  \"siteId\": {{site_id}},\n  \"startTime\": \"2026-03-16T10:00:00\",\n  \"endTime\": \"2026-03-16T11:00:00\",\n  \"reason\": \"Test hold\"\n}" },
+            "url": { "raw": "{{base_url}}/resource-holds", "host": ["{{base_url}}"], "path": ["resource-holds"] }
+          }
+        },
+        {
+          "name": "Get Resource Hold",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+            "pm.test('fetched resource hold', () => pm.expect(pm.response.code).to.equal(200));",
+            "const json = pm.response.json();",
+            "pm.test('holds expected id', () => pm.expect(json.data.holdId).to.eql(parseInt(pm.environment.get('resource_hold_id'))));"
+          ]}}],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{base_url}}/resource-holds/{{resource_hold_id}}", "host": ["{{base_url}}"], "path": ["resource-holds","{{resource_hold_id}}"] }
+          }
+        },
+        {
+          "name": "Search Resource Holds",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+            "pm.test('search returned list', () => pm.expect(pm.response.code).to.equal(200));",
+            "const json = pm.response.json();",
+            "pm.test('list contains at least one hold', () => pm.expect(json.data.length).to.be.at.least(1));"
+          ]}}],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{base_url}}/resource-holds?siteId={{site_id}}&resourceType=Room&resourceId={{room_id}}", "host": ["{{base_url}}"], "path": ["resource-holds"], "query": [{"key":"siteId","value":"{{site_id}}"},{"key":"resourceType","value":"Room"},{"key":"resourceId","value":"{{room_id}}"}] }
+          }
+        },
+        {
+          "name": "Release Resource Hold",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+            "pm.test('released resource hold', () => pm.expect(pm.response.code).to.equal(200));",
+            "const json = pm.response.json();",
+            "pm.test('response indicates success', () => pm.expect(json.success).to.be.true);"
+          ]}}],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": { "raw": "{{base_url}}/resource-holds/{{resource_hold_id}}", "host": ["{{base_url}}"], "path": ["resource-holds","{{resource_hold_id}}"] }
+          }
+        }
+      ]
+    }
   ],
   "variable": [
     { "key": "base_url", "value": "http://localhost:5159", "type": "string" }
