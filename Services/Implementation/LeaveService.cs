@@ -14,7 +14,7 @@ namespace CareSchedule.Services.Implementation
         private readonly IAppointmentRepository _apptRepo;
         private readonly IRosterAssignmentRepository _rosterAssignRepo;
         private readonly INotificationRepository _notifRepo;
-        private readonly IAuditLogRepository _auditRepo;
+        private readonly IAuditLogService _auditService;
         private readonly IAvailabilityBlockRepository _blockRepo;
         private readonly IUnitOfWork _uow;
 
@@ -24,7 +24,7 @@ namespace CareSchedule.Services.Implementation
             IAppointmentRepository apptRepo,
             IRosterAssignmentRepository rosterAssignRepo,
             INotificationRepository notifRepo,
-            IAuditLogRepository auditRepo,
+            IAuditLogService auditService,
             IAvailabilityBlockRepository blockRepo,
             IUnitOfWork uow)
         {
@@ -33,7 +33,7 @@ namespace CareSchedule.Services.Implementation
             _apptRepo = apptRepo;
             _rosterAssignRepo = rosterAssignRepo;
             _notifRepo = notifRepo;
-            _auditRepo = auditRepo;
+            _auditService = auditService;
             _blockRepo = blockRepo;
             _uow = uow;
         }

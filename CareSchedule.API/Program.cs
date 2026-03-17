@@ -5,21 +5,14 @@ using CareSchedule.Services.Implementation;
 using CareSchedule.Services.Interface;
 using CareSchedule.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using CareSchedule.API.Middleware;
 using CareSchedule.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// load an local settings file that is ignored by source control
-builder.Configuration.AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: true);
-
 builder.Services.AddControllers();
 
-
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-if (string.IsNullOrWhiteSpace(connectionString))
-{
-    throw new InvalidOperationException("Database connection string not configured. \n Set ConnectionStrings:DefaultConnection in appsettings.Local.json.");
-}
 builder.Services.AddDbContext<CareScheduleContext>(options =>
     options.UseSqlServer(connectionString));
 
@@ -31,6 +24,7 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
 builder.Services.AddScoped<IAppointmentChangeRepository, AppointmentChangeRepository>();
 builder.Services.AddScoped<IPublishedSlotBookingRepository, PublishedSlotBookingRepository>();
+builder.Services.AddScoped<ICalendarEventRepository, CalendarEventRepository>();
 builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
 builder.Services.AddScoped<IReminderScheduleRepository, ReminderScheduleRepository>();
 
@@ -39,12 +33,11 @@ builder.Services.AddScoped<IBookingService, BookingService>();
 
 
 // Repositories
-// Repositories
 builder.Services.AddScoped<IAvailabilityTemplateRepository, AvailabilityTemplateRepository>();
 builder.Services.AddScoped<IAvailabilityBlockRepository, AvailabilityBlockRepository>();
 builder.Services.AddScoped<IPublishedSlotRepository, PublishedSlotRepository>();
 builder.Services.AddScoped<ICalendarEventRepository, CalendarEventRepository>();
-builder.Services.AddScoped<IReminderScheduleRepository, ReminderScheduleRepository>();
+
 // Service
 builder.Services.AddScoped<IAvailabilityService, AvailabilityService>();
 
@@ -73,7 +66,6 @@ builder.Services.AddScoped<IProviderMasterService, ProviderMasterService>();
 builder.Services.AddScoped<IServiceMasterService, ServiceMasterService>();
 builder.Services.AddScoped<IProviderServiceMappingService, ProviderServiceMappingService>();
 
-
 // Waitlist
 builder.Services.AddScoped<IWaitlistRepository, WaitlistRepository>();
 builder.Services.AddScoped<IWaitlistService, WaitlistService>();
@@ -82,7 +74,6 @@ builder.Services.AddScoped<IWaitlistService, WaitlistService>();
 builder.Services.AddScoped<ICheckInRepository, CheckInRepository>();
 builder.Services.AddScoped<ICheckInService, CheckInService>();
 
-
 // Outcome
 builder.Services.AddScoped<IOutcomeRepository, OutcomeRepository>();
 builder.Services.AddScoped<IOutcomeService, OutcomeService>();
@@ -90,10 +81,10 @@ builder.Services.AddScoped<IOutcomeService, OutcomeService>();
 // Calendar
 builder.Services.AddScoped<IResourceHoldRepository, ResourceHoldRepository>();
 builder.Services.AddScoped<ICalendarService, CalendarService>();
+builder.Services.AddScoped<IResourceHoldService, ResourceHoldService>();
 
 // Notification
 builder.Services.AddScoped<INotificationService, NotificationService>();
-
 
 // Roster
 builder.Services.AddScoped<IShiftTemplateRepository, ShiftTemplateRepository>();
@@ -119,7 +110,6 @@ builder.Services.AddScoped<IReportService, ReportService>();
 // Billing
 builder.Services.AddScoped<IChargeRefRepository, ChargeRefRepository>();
 builder.Services.AddScoped<IBillingService, BillingService>();
-
 
 var app = builder.Build();
 

@@ -9,16 +9,16 @@ namespace CareSchedule.Services.Implementation
     public class BillingService : IBillingService
     {
         private readonly IChargeRefRepository _chargeRepo;
-        private readonly IAuditLogRepository _auditRepo;
+        private readonly IAuditLogService _auditService;
         private readonly IUnitOfWork _uow;
 
         public BillingService(
             IChargeRefRepository chargeRepo,
-            IAuditLogRepository auditRepo,
+            IAuditLogService auditService,
             IUnitOfWork uow)
         {
             _chargeRepo = chargeRepo;
-            _auditRepo = auditRepo;
+            _auditService = auditService;
             _uow = uow;
         }
 

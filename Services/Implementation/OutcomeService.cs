@@ -1,6 +1,7 @@
 using System;
 using CareSchedule.DTOs;
 using CareSchedule.Infrastructure;
+using CareSchedule.Models;
 using CareSchedule.Repositories.Interface;
 using CareSchedule.Services.Interface;
 
@@ -13,7 +14,7 @@ namespace CareSchedule.Services.Implementation
         private readonly IPublishedSlotBookingRepository _slotRepo;
         private readonly IChargeRefRepository _chargeRepo;
         private readonly INotificationRepository _notifRepo;
-        private readonly IAuditLogRepository _auditRepo;
+        private readonly IAuditLogService _auditService;
         private readonly IUnitOfWork _uow;
 
         public OutcomeService(
@@ -22,7 +23,7 @@ namespace CareSchedule.Services.Implementation
             IPublishedSlotBookingRepository slotRepo,
             IChargeRefRepository chargeRepo,
             INotificationRepository notifRepo,
-            IAuditLogRepository auditRepo,
+            IAuditLogService auditService,
             IUnitOfWork uow)
         {
             _outcomeRepo = outcomeRepo;
@@ -30,18 +31,109 @@ namespace CareSchedule.Services.Implementation
             _slotRepo = slotRepo;
             _chargeRepo = chargeRepo;
             _notifRepo = notifRepo;
-            _auditRepo = auditRepo;
+            _auditService = auditService;
             _uow = uow;
         }
 
         public OutcomeResponseDto RecordOutcome(int appointmentId, RecordOutcomeRequestDto dto)
         {
-            throw new NotImplementedException();
+            if (appointmentId <= 0) throw new ArgumentException("Invalid appointmentId.");
+            if (string.IsNullOrWhiteSpace(dto.Outcome)) throw new ArgumentException("Outcome is required.");
+
+            var appt = _apptRepo.GetById(appointmentId);
+            if (appt == null) throw new KeyNotFoundException($"Appointment {appointmentId} not found.");
+            if (appt.Status is "Completed" or "NoShow" or "Cancelled")
+                throw new ArgumentException("Appointment already finalized.");
+
+            var existing = _outcomeRepo.GetByAppointmentId(appointmentId);
+            if (existing != null) throw new ArgumentException("Outcome already recorded for this appointment.");
+
+            appt.Status = "Completed";
+            _apptRepo.Update(appt);
+
+            var entity = new Outcome
+            {
+                AppointmentId = appointmentId,
+                Outcome1 = dto.Outcome.Trim(),
+                Notes = dto.Notes,
+                MarkedBy = dto.MarkedBy,
+                MarkedDate = DateTime.UtcNow
+            };
+            _outcomeRepo.Add(entity);
+
+            _notifRepo.Add(new Notification
+            {
+                UserId = appt.PatientId,
+                Message = $"Your appointment on {appt.SlotDate:yyyy-MM-dd} has been completed.",
+                Category = "Outcome",
+                Status = "Unread",
+                CreatedDate = DateTime.UtcNow
+            });
+            _uow.SaveChanges();
+
+            _auditService.CreateAudit(new AuditLogCreateDto
+            {
+                Action = "RecordOutcome",
+                Resource = "Outcome",
+                Metadata = $"AppointmentId={appointmentId}; Outcome={dto.Outcome.Trim()}"
+            });
+
+            return Map(entity);
         }
 
         public OutcomeResponseDto MarkNoShow(int appointmentId, RecordOutcomeRequestDto dto)
         {
-            throw new NotImplementedException();
+            if (appointmentId <= 0) throw new ArgumentException("Invalid appointmentId.");
+
+            var appt = _apptRepo.GetById(appointmentId);
+            if (appt == null) throw new KeyNotFoundException($"Appointment {appointmentId} not found.");
+            if (appt.Status is "Completed" or "NoShow" or "Cancelled")
+                throw new ArgumentException("Appointment already finalized.");
+
+            var existing = _outcomeRepo.GetByAppointmentId(appointmentId);
+            if (existing != null) throw new ArgumentException("Outcome already recorded for this appointment.");
+
+            appt.Status = "NoShow";
+            _apptRepo.Update(appt);
+
+            var entity = new Outcome
+            {
+                AppointmentId = appointmentId,
+                Outcome1 = "NoShow",
+                Notes = dto.Notes,
+                MarkedBy = dto.MarkedBy,
+                MarkedDate = DateTime.UtcNow
+            };
+            _outcomeRepo.Add(entity);
+
+            _notifRepo.Add(new Notification
+            {
+                UserId = appt.PatientId,
+                Message = $"You were marked no-show for your appointment on {appt.SlotDate:yyyy-MM-dd}.",
+                Category = "Outcome",
+                Status = "Unread",
+                CreatedDate = DateTime.UtcNow
+            });
+            _uow.SaveChanges();
+
+            _auditService.CreateAudit(new AuditLogCreateDto
+            {
+                Action = "MarkNoShow",
+                Resource = "Outcome",
+                Metadata = $"AppointmentId={appointmentId}"
+            });
+
+            return Map(entity);
         }
+
+        private static OutcomeResponseDto Map(Outcome o) => new()
+        {
+            OutcomeId = o.OutcomeId,
+            AppointmentId = o.AppointmentId,
+            Outcome = o.Outcome1,
+            Notes = o.Notes,
+            MarkedBy = o.MarkedBy,
+            MarkedDate = o.MarkedDate
+        };
     }
 }
