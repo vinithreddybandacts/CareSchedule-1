@@ -12,26 +12,25 @@ namespace CareSchedule.Repositories.Implementation
         private readonly CareScheduleContext _db;
         public NotificationRepository(CareScheduleContext db) { _db = db; }
 
-        public void Add(Notification entity)
-        {
-            _db.Notifications.Add(entity);
-            _db.SaveChanges();
-        }
+        public void Add(Notification entity) => _db.Notifications.Add(entity);
 
         public Notification? GetById(int notificationId)
         {
-            throw new NotImplementedException();
+            return _db.Notifications.FirstOrDefault(n => n.NotificationId == notificationId);
         }
 
         public IEnumerable<Notification> GetByUserId(int userId)
         {
-            throw new NotImplementedException();
+            return _db.Notifications
+                .Where(n => n.UserId == userId)
+                .OrderByDescending(n => n.CreatedDate)
+                .ToList();
         }
 
         public void Update(Notification entity)
         {
-            throw new NotImplementedException();
+            _db.Notifications.Update(entity);
+            _db.SaveChanges();
         }
-
     }
 }

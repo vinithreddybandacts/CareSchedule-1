@@ -4,6 +4,7 @@ namespace CareSchedule.DTOs
     {
         public int RoomId { get; set; }
         public string RoomName { get; set; } = "";
+        public string RoomType { get; set; } = "";
         public int SiteId { get; set; }
         public string? AttributesJson { get; set; }
         public string Status { get; set; } = "";
@@ -12,6 +13,7 @@ namespace CareSchedule.DTOs
     public class RoomCreateDto
     {
         public string RoomName { get; set; } = "";
+        public string RoomType { get; set; } = "General";
         public int SiteId { get; set; }
         public string? AttributesJson { get; set; }
     }
@@ -19,6 +21,7 @@ namespace CareSchedule.DTOs
     public class RoomUpdateDto
     {
         public string? RoomName { get; set; }
+        public string? RoomType { get; set; }
         public int? SiteId { get; set; }
         public string? AttributesJson { get; set; }
     }

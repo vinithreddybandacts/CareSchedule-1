@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "careschedule-all-modules-api",
     "name": "CareSchedule - All Modules API",
-    "description": "Complete API collection covering all CareSchedule modules. Run requests in order within each folder — POST requests auto-save IDs. Working APIs return real data; skeleton APIs return 500 (NotImplementedException) until implemented.",
+    "description": "Complete API collection covering all CareSchedule modules. Run requests in order within each folder — POST requests auto-save IDs. Skeleton APIs (Roster, Leave, Reports, Billing) return 500 until implemented.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
@@ -12,7 +12,7 @@
         {
           "name": "Create Site",
           "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
-            "if (pm.response.code === 201 || pm.response.code === 200) {",
+            "if (pm.response.code === 200) {",
             "    var json = pm.response.json();",
             "    pm.environment.set('site_id', json.data.siteId);",
             "    pm.test('Site created', () => pm.expect(json.success).to.be.true);",
@@ -28,24 +28,26 @@
         {
           "name": "Create Room",
           "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
-            "if (pm.response.code === 201) {",
+            "if (pm.response.code === 200) {",
             "    var json = pm.response.json();",
             "    pm.environment.set('room_id', json.data.roomId);",
+            "    pm.test('Room created', () => pm.expect(json.success).to.be.true);",
             "}"
           ]}}],
           "request": {
             "method": "POST",
             "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": { "mode": "raw", "raw": "{\n  \"roomName\": \"Room 101\",\n  \"siteId\": {{site_id}}\n}" },
+            "body": { "mode": "raw", "raw": "{\n  \"roomName\": \"Room 101\",\n  \"roomType\": \"Consultation\",\n  \"siteId\": {{site_id}}\n}" },
             "url": { "raw": "{{base_url}}/api/masterdata/rooms", "host": ["{{base_url}}"], "path": ["api","masterdata","rooms"] }
           }
         },
         {
           "name": "Create Provider",
           "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
-            "if (pm.response.code === 201) {",
+            "if (pm.response.code === 200) {",
             "    var json = pm.response.json();",
             "    pm.environment.set('provider_id', json.data.providerId);",
+            "    pm.test('Provider created', () => pm.expect(json.success).to.be.true);",
             "}"
           ]}}],
           "request": {
@@ -58,9 +60,10 @@
         {
           "name": "Create Service",
           "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
-            "if (pm.response.code === 201) {",
+            "if (pm.response.code === 200) {",
             "    var json = pm.response.json();",
             "    pm.environment.set('service_id', json.data.serviceId);",
+            "    pm.test('Service created', () => pm.expect(json.success).to.be.true);",
             "}"
           ]}}],
           "request": {
@@ -73,7 +76,7 @@
         {
           "name": "Map Provider to Service",
           "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
-            "if (pm.response.code === 201) {",
+            "if (pm.response.code === 200) {",
             "    var json = pm.response.json();",
             "    pm.environment.set('ps_id', json.data.psid);",
             "}"
@@ -88,7 +91,7 @@
         {
           "name": "Create Patient User",
           "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
-            "if (pm.response.code === 201) {",
+            "if (pm.response.code === 200) {",
             "    var json = pm.response.json();",
             "    pm.environment.set('patient_id', json.data.userId);",
             "}"
@@ -103,7 +106,7 @@
         {
           "name": "Create FrontDesk User",
           "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
-            "if (pm.response.code === 201) {",
+            "if (pm.response.code === 200) {",
             "    var json = pm.response.json();",
             "    pm.environment.set('frontdesk_id', json.data.userId);",
             "}"
@@ -111,7 +114,7 @@
           "request": {
             "method": "POST",
             "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Neha Singh\",\n  \"role\": \"FrontDesk\",\n  \"email\": \"neha@clinic.com\"\n}" },
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Neha Singh\",\n  \"role\": \"FrontDesk\",\n  \"email\": \"neha@clinic.com\",\n  \"phone\": \"9876543211\"\n}" },
             "url": { "raw": "{{base_url}}/api/iam/users", "host": ["{{base_url}}"], "path": ["api","iam","users"] }
           }
         }
@@ -158,7 +161,7 @@
           "request": {
             "method": "DELETE",
             "header": [],
-            "url": { "raw": "{{base_url}}/api/iam/users/{{patient_id}}", "host": ["{{base_url}}"], "path": ["api","iam","users","{{patient_id}}"] }
+            "url": { "raw": "{{base_url}}/api/iam/users/{{frontdesk_id}}", "host": ["{{base_url}}"], "path": ["api","iam","users","{{frontdesk_id}}"] }
           }
         },
         {
@@ -166,31 +169,7 @@
           "request": {
             "method": "POST",
             "header": [],
-            "url": { "raw": "{{base_url}}/api/iam/users/{{patient_id}}/activate", "host": ["{{base_url}}"], "path": ["api","iam","users","{{patient_id}}","activate"] }
-          }
-        },
-        {
-          "name": "Lock User (Skeleton)",
-          "request": {
-            "method": "PATCH",
-            "header": [],
-            "url": { "raw": "{{base_url}}/api/iam/users/{{patient_id}}/lock", "host": ["{{base_url}}"], "path": ["api","iam","users","{{patient_id}}","lock"] }
-          }
-        },
-        {
-          "name": "Unlock User (Skeleton)",
-          "request": {
-            "method": "PATCH",
-            "header": [],
-            "url": { "raw": "{{base_url}}/api/iam/users/{{patient_id}}/unlock", "host": ["{{base_url}}"], "path": ["api","iam","users","{{patient_id}}","unlock"] }
-          }
-        },
-        {
-          "name": "Reset Password (Skeleton)",
-          "request": {
-            "method": "PATCH",
-            "header": [],
-            "url": { "raw": "{{base_url}}/api/iam/users/{{patient_id}}/reset-password", "host": ["{{base_url}}"], "path": ["api","iam","users","{{patient_id}}","reset-password"] }
+            "url": { "raw": "{{base_url}}/api/iam/users/{{frontdesk_id}}/activate", "host": ["{{base_url}}"], "path": ["api","iam","users","{{frontdesk_id}}","activate"] }
           }
         }
       ]
@@ -287,7 +266,7 @@
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": { "mode": "raw", "raw": "{\n  \"publishedSlotId\": 1,\n  \"patientId\": {{patient_id}},\n  \"bookingChannel\": \"FrontDesk\"\n}" },
             "url": { "raw": "{{base_url}}/appointments", "host": ["{{base_url}}"], "path": ["appointments"] },
-            "description": "Book using a slot ID from 'Get Open Slots'. Update publishedSlotId manually."
+            "description": "Update publishedSlotId with a valid slot from 'Get Open Slots'."
           }
         },
         {
@@ -326,7 +305,7 @@
           }
         },
         {
-          "name": "Mark Checked-In (Skeleton)",
+          "name": "Mark Checked-In",
           "request": {
             "method": "PATCH",
             "header": [],
@@ -334,7 +313,7 @@
           }
         },
         {
-          "name": "Mark Complete (Skeleton)",
+          "name": "Mark Complete",
           "request": {
             "method": "PATCH",
             "header": [],
@@ -342,7 +321,7 @@
           }
         },
         {
-          "name": "Mark No-Show (Skeleton)",
+          "name": "Mark No-Show",
           "request": {
             "method": "PATCH",
             "header": [],
@@ -352,10 +331,16 @@
       ]
     },
     {
-      "name": "4. Waitlist (Skeleton)",
+      "name": "4. Waitlist",
       "item": [
         {
           "name": "Add to Waitlist",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+            "if (pm.response.code === 200) {",
+            "    var json = pm.response.json();",
+            "    pm.environment.set('wait_id', json.data.waitId);",
+            "}"
+          ]}}],
           "request": {
             "method": "POST",
             "header": [{ "key": "Content-Type", "value": "application/json" }],
@@ -368,7 +353,7 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": { "raw": "{{base_url}}/waitlist", "host": ["{{base_url}}"], "path": ["waitlist"] }
+            "url": { "raw": "{{base_url}}/waitlist?siteId={{site_id}}", "host": ["{{base_url}}"], "path": ["waitlist"], "query": [{"key":"siteId","value":"{{site_id}}"}] }
           }
         },
         {
@@ -377,7 +362,7 @@
             "method": "PATCH",
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": { "mode": "raw", "raw": "{\n  \"bookingChannel\": \"FrontDesk\"\n}" },
-            "url": { "raw": "{{base_url}}/waitlist/1/filled", "host": ["{{base_url}}"], "path": ["waitlist","1","filled"] }
+            "url": { "raw": "{{base_url}}/waitlist/{{wait_id}}/filled", "host": ["{{base_url}}"], "path": ["waitlist","{{wait_id}}","filled"] }
           }
         },
         {
@@ -385,16 +370,22 @@
           "request": {
             "method": "DELETE",
             "header": [],
-            "url": { "raw": "{{base_url}}/waitlist/1", "host": ["{{base_url}}"], "path": ["waitlist","1"] }
+            "url": { "raw": "{{base_url}}/waitlist/{{wait_id}}", "host": ["{{base_url}}"], "path": ["waitlist","{{wait_id}}"] }
           }
         }
       ]
     },
     {
-      "name": "5. CheckIn (Skeleton)",
+      "name": "5. CheckIn",
       "item": [
         {
           "name": "Check-In Patient",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+            "if (pm.response.code === 200) {",
+            "    var json = pm.response.json();",
+            "    pm.environment.set('checkin_id', json.data.checkInId);",
+            "}"
+          ]}}],
           "request": {
             "method": "POST",
             "header": [{ "key": "Content-Type", "value": "application/json" }],
@@ -403,12 +394,20 @@
           }
         },
         {
+          "name": "Get CheckIn by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{base_url}}/checkins/{{checkin_id}}", "host": ["{{base_url}}"], "path": ["checkins","{{checkin_id}}"] }
+          }
+        },
+        {
           "name": "Assign Room",
           "request": {
             "method": "PATCH",
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": { "mode": "raw", "raw": "{\n  \"roomId\": {{room_id}}\n}" },
-            "url": { "raw": "{{base_url}}/checkins/1/assign-room", "host": ["{{base_url}}"], "path": ["checkins","1","assign-room"] }
+            "url": { "raw": "{{base_url}}/checkins/{{checkin_id}}/assign-room", "host": ["{{base_url}}"], "path": ["checkins","{{checkin_id}}","assign-room"] }
           }
         },
         {
@@ -416,7 +415,7 @@
           "request": {
             "method": "PATCH",
             "header": [],
-            "url": { "raw": "{{base_url}}/checkins/1/in-room", "host": ["{{base_url}}"], "path": ["checkins","1","in-room"] }
+            "url": { "raw": "{{base_url}}/checkins/{{checkin_id}}/in-room", "host": ["{{base_url}}"], "path": ["checkins","{{checkin_id}}","in-room"] }
           }
         },
         {
@@ -424,7 +423,7 @@
           "request": {
             "method": "PATCH",
             "header": [],
-            "url": { "raw": "{{base_url}}/checkins/1/with-provider", "host": ["{{base_url}}"], "path": ["checkins","1","with-provider"] }
+            "url": { "raw": "{{base_url}}/checkins/{{checkin_id}}/with-provider", "host": ["{{base_url}}"], "path": ["checkins","{{checkin_id}}","with-provider"] }
           }
         },
         {
@@ -433,7 +432,7 @@
             "method": "PATCH",
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": { "mode": "raw", "raw": "{\n  \"status\": \"WithProvider\"\n}" },
-            "url": { "raw": "{{base_url}}/checkins/1/status", "host": ["{{base_url}}"], "path": ["checkins","1","status"] }
+            "url": { "raw": "{{base_url}}/checkins/{{checkin_id}}/status", "host": ["{{base_url}}"], "path": ["checkins","{{checkin_id}}","status"] }
           }
         },
         {
@@ -455,14 +454,14 @@
       ]
     },
     {
-      "name": "6. Outcome (Skeleton)",
+      "name": "6. Outcome",
       "item": [
         {
           "name": "Record Outcome (Complete)",
           "request": {
             "method": "POST",
             "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": { "mode": "raw", "raw": "{\n  \"outcome\": \"Completed\",\n  \"notes\": \"Patient consultation completed successfully\",\n  \"markedBy\": {{provider_id}}\n}" },
+            "body": { "mode": "raw", "raw": "{\n  \"outcome\": \"Completed\",\n  \"notes\": \"Patient consultation completed successfully\",\n  \"markedBy\": {{frontdesk_id}}\n}" },
             "url": { "raw": "{{base_url}}/outcome/{{appointment_id}}", "host": ["{{base_url}}"], "path": ["outcome","{{appointment_id}}"] }
           }
         },
@@ -471,14 +470,14 @@
           "request": {
             "method": "POST",
             "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": { "mode": "raw", "raw": "{\n  \"outcome\": \"NoShow\",\n  \"notes\": \"Patient did not show up\",\n  \"markedBy\": {{provider_id}}\n}" },
+            "body": { "mode": "raw", "raw": "{\n  \"outcome\": \"NoShow\",\n  \"notes\": \"Patient did not show up\",\n  \"markedBy\": {{frontdesk_id}}\n}" },
             "url": { "raw": "{{base_url}}/outcome/{{appointment_id}}/no-show", "host": ["{{base_url}}"], "path": ["outcome","{{appointment_id}}","no-show"] }
           }
         }
       ]
     },
     {
-      "name": "7. Calendar (Skeleton)",
+      "name": "7. Calendar",
       "item": [
         {
           "name": "Get Calendar by Provider",
@@ -499,7 +498,60 @@
       ]
     },
     {
-      "name": "8. Notifications (Skeleton)",
+      "name": "8. Resource Holds",
+      "item": [
+        {
+          "name": "Create Resource Hold",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+            "if (pm.response.code === 200) {",
+            "    var json = pm.response.json();",
+            "    pm.environment.set('hold_id', json.data.holdId);",
+            "}"
+          ]}}],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"resourceType\": \"Room\",\n  \"resourceId\": {{room_id}},\n  \"siteId\": {{site_id}},\n  \"startTime\": \"2026-03-16 09:00\",\n  \"endTime\": \"2026-03-16 10:00\",\n  \"reason\": \"Maintenance\"\n}" },
+            "url": { "raw": "{{base_url}}/resource-holds", "host": ["{{base_url}}"], "path": ["resource-holds"] }
+          }
+        },
+        {
+          "name": "Search Resource Holds",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{base_url}}/resource-holds?siteId={{site_id}}", "host": ["{{base_url}}"], "path": ["resource-holds"], "query": [{"key":"siteId","value":"{{site_id}}"}] }
+          }
+        },
+        {
+          "name": "Get Resource Hold by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{base_url}}/resource-holds/{{hold_id}}", "host": ["{{base_url}}"], "path": ["resource-holds","{{hold_id}}"] }
+          }
+        },
+        {
+          "name": "Update Resource Hold",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"reason\": \"Extended maintenance\",\n  \"endTime\": \"2026-03-16 12:00\"\n}" },
+            "url": { "raw": "{{base_url}}/resource-holds/{{hold_id}}", "host": ["{{base_url}}"], "path": ["resource-holds","{{hold_id}}"] }
+          }
+        },
+        {
+          "name": "Release Resource Hold",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": { "raw": "{{base_url}}/resource-holds/{{hold_id}}", "host": ["{{base_url}}"], "path": ["resource-holds","{{hold_id}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "9. Notifications",
       "item": [
         {
           "name": "Get Notifications by User",
@@ -528,7 +580,108 @@
       ]
     },
     {
-      "name": "9. Roster (Skeleton)",
+      "name": "10. Rules (Capacity + SLA)",
+      "item": [
+        {
+          "name": "Create Capacity Rule",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+            "if (pm.response.code === 200) {",
+            "    var json = pm.response.json();",
+            "    pm.environment.set('rule_id', json.data.ruleId);",
+            "}"
+          ]}}],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"scope\": \"Provider\",\n  \"maxApptsPerDay\": 20,\n  \"maxConcurrentRooms\": 1,\n  \"bufferMin\": 5,\n  \"effectiveFrom\": \"2026-03-01\"\n}" },
+            "url": { "raw": "{{base_url}}/capacity-rules", "host": ["{{base_url}}"], "path": ["capacity-rules"] }
+          }
+        },
+        {
+          "name": "Search Capacity Rules",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{base_url}}/capacity-rules", "host": ["{{base_url}}"], "path": ["capacity-rules"] }
+          }
+        },
+        {
+          "name": "Get Capacity Rule by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{base_url}}/capacity-rules/{{rule_id}}", "host": ["{{base_url}}"], "path": ["capacity-rules","{{rule_id}}"] }
+          }
+        },
+        {
+          "name": "Update Capacity Rule",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"maxApptsPerDay\": 25\n}" },
+            "url": { "raw": "{{base_url}}/capacity-rules/{{rule_id}}", "host": ["{{base_url}}"], "path": ["capacity-rules","{{rule_id}}"] }
+          }
+        },
+        {
+          "name": "Deactivate Capacity Rule",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": { "raw": "{{base_url}}/capacity-rules/{{rule_id}}", "host": ["{{base_url}}"], "path": ["capacity-rules","{{rule_id}}"] }
+          }
+        },
+        {
+          "name": "Create SLA",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+            "if (pm.response.code === 200) {",
+            "    var json = pm.response.json();",
+            "    pm.environment.set('sla_id', json.data.slaId);",
+            "}"
+          ]}}],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"scope\": \"Global\",\n  \"metric\": \"WaitTime\",\n  \"targetValue\": 15,\n  \"unit\": \"Minutes\"\n}" },
+            "url": { "raw": "{{base_url}}/sla", "host": ["{{base_url}}"], "path": ["sla"] }
+          }
+        },
+        {
+          "name": "Search SLAs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{base_url}}/sla", "host": ["{{base_url}}"], "path": ["sla"] }
+          }
+        },
+        {
+          "name": "Get SLA by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{base_url}}/sla/{{sla_id}}", "host": ["{{base_url}}"], "path": ["sla","{{sla_id}}"] }
+          }
+        },
+        {
+          "name": "Update SLA",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"targetValue\": 20\n}" },
+            "url": { "raw": "{{base_url}}/sla/{{sla_id}}", "host": ["{{base_url}}"], "path": ["sla","{{sla_id}}"] }
+          }
+        },
+        {
+          "name": "Deactivate SLA",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": { "raw": "{{base_url}}/sla/{{sla_id}}", "host": ["{{base_url}}"], "path": ["sla","{{sla_id}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "11. Roster (Skeleton)",
       "item": [
         {
           "name": "Create Shift Template",
@@ -537,23 +690,6 @@
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": { "mode": "raw", "raw": "{\n  \"name\": \"Morning Shift\",\n  \"startTime\": \"08:00\",\n  \"endTime\": \"14:00\",\n  \"breakMinutes\": 30,\n  \"role\": \"Nurse\",\n  \"siteId\": {{site_id}}\n}" },
             "url": { "raw": "{{base_url}}/shift-templates", "host": ["{{base_url}}"], "path": ["shift-templates"] }
-          }
-        },
-        {
-          "name": "Update Shift Template",
-          "request": {
-            "method": "PUT",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": { "mode": "raw", "raw": "{\n  \"breakMinutes\": 45\n}" },
-            "url": { "raw": "{{base_url}}/shift-templates/1", "host": ["{{base_url}}"], "path": ["shift-templates","1"] }
-          }
-        },
-        {
-          "name": "Delete Shift Template",
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": { "raw": "{{base_url}}/shift-templates/1", "host": ["{{base_url}}"], "path": ["shift-templates","1"] }
           }
         },
         {
@@ -566,15 +702,6 @@
           }
         },
         {
-          "name": "Publish Roster",
-          "request": {
-            "method": "PATCH",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": { "mode": "raw", "raw": "{\n  \"publishedBy\": {{frontdesk_id}}\n}" },
-            "url": { "raw": "{{base_url}}/rosters/1/publish", "host": ["{{base_url}}"], "path": ["rosters","1","publish"] }
-          }
-        },
-        {
           "name": "Assign Staff",
           "request": {
             "method": "POST",
@@ -584,52 +711,17 @@
           }
         },
         {
-          "name": "Swap Shift",
-          "request": {
-            "method": "PATCH",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": { "mode": "raw", "raw": "{\n  \"newUserId\": {{patient_id}}\n}" },
-            "url": { "raw": "{{base_url}}/roster-assignments/1/swap", "host": ["{{base_url}}"], "path": ["roster-assignments","1","swap"] }
-          }
-        },
-        {
-          "name": "Mark Absent",
-          "request": {
-            "method": "PATCH",
-            "header": [],
-            "url": { "raw": "{{base_url}}/roster-assignments/1/absent", "host": ["{{base_url}}"], "path": ["roster-assignments","1","absent"] }
-          }
-        },
-        {
           "name": "Search Assignments",
           "request": {
             "method": "GET",
             "header": [],
             "url": { "raw": "{{base_url}}/roster-assignments?siteId={{site_id}}&date=2026-03-10", "host": ["{{base_url}}"], "path": ["roster-assignments"], "query": [{"key":"siteId","value":"{{site_id}}"},{"key":"date","value":"2026-03-10"}] }
           }
-        },
-        {
-          "name": "Create On-Call",
-          "request": {
-            "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": { "mode": "raw", "raw": "{\n  \"siteId\": {{site_id}},\n  \"department\": \"Emergency\",\n  \"date\": \"2026-03-10\",\n  \"startTime\": \"18:00\",\n  \"endTime\": \"06:00\",\n  \"primaryUserId\": {{frontdesk_id}}\n}" },
-            "url": { "raw": "{{base_url}}/oncall", "host": ["{{base_url}}"], "path": ["oncall"] }
-          }
-        },
-        {
-          "name": "Update On-Call",
-          "request": {
-            "method": "PUT",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": { "mode": "raw", "raw": "{\n  \"backupUserId\": {{patient_id}}\n}" },
-            "url": { "raw": "{{base_url}}/oncall/1", "host": ["{{base_url}}"], "path": ["oncall","1"] }
-          }
         }
       ]
     },
     {
-      "name": "10. Leave (Skeleton)",
+      "name": "12. Leave (Skeleton)",
       "item": [
         {
           "name": "Search Leave Requests",
@@ -654,70 +746,11 @@
             "header": [],
             "url": { "raw": "{{base_url}}/leave/1/reject", "host": ["{{base_url}}"], "path": ["leave","1","reject"] }
           }
-        },
-        {
-          "name": "Create Leave Impact",
-          "request": {
-            "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": { "mode": "raw", "raw": "{\n  \"leaveId\": 1,\n  \"impactType\": \"Appointment\",\n  \"impactJson\": \"{\\\"appointmentIds\\\": [1,2]}\"\n}" },
-            "url": { "raw": "{{base_url}}/leave-impact", "host": ["{{base_url}}"], "path": ["leave-impact"] }
-          }
-        },
-        {
-          "name": "Resolve Leave Impact",
-          "request": {
-            "method": "PATCH",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": { "mode": "raw", "raw": "{\n  \"resolvedBy\": {{frontdesk_id}}\n}" },
-            "url": { "raw": "{{base_url}}/leave-impact/1/resolve", "host": ["{{base_url}}"], "path": ["leave-impact","1","resolve"] }
-          }
         }
       ]
     },
     {
-      "name": "11. Rules (Skeleton)",
-      "item": [
-        {
-          "name": "Create Capacity Rule",
-          "request": {
-            "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": { "mode": "raw", "raw": "{\n  \"scope\": \"Provider\",\n  \"maxApptsPerDay\": 20,\n  \"maxConcurrentRooms\": 1,\n  \"bufferMin\": 5,\n  \"effectiveFrom\": \"2026-03-01\"\n}" },
-            "url": { "raw": "{{base_url}}/capacity-rules", "host": ["{{base_url}}"], "path": ["capacity-rules"] }
-          }
-        },
-        {
-          "name": "Update Capacity Rule",
-          "request": {
-            "method": "PUT",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": { "mode": "raw", "raw": "{\n  \"maxApptsPerDay\": 25\n}" },
-            "url": { "raw": "{{base_url}}/capacity-rules/1", "host": ["{{base_url}}"], "path": ["capacity-rules","1"] }
-          }
-        },
-        {
-          "name": "Create SLA",
-          "request": {
-            "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": { "mode": "raw", "raw": "{\n  \"scope\": \"Global\",\n  \"metric\": \"WaitTime\",\n  \"targetValue\": 15,\n  \"unit\": \"Minutes\"\n}" },
-            "url": { "raw": "{{base_url}}/sla", "host": ["{{base_url}}"], "path": ["sla"] }
-          }
-        },
-        {
-          "name": "Update SLA",
-          "request": {
-            "method": "PUT",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": { "mode": "raw", "raw": "{\n  \"targetValue\": 20\n}" },
-            "url": { "raw": "{{base_url}}/sla/1", "host": ["{{base_url}}"], "path": ["sla","1"] }
-          }
-        }
-      ]
-    },
-    {
-      "name": "12. Reports (Skeleton)",
+      "name": "13. Reports (Skeleton)",
       "item": [
         {
           "name": "Search Reports",
@@ -726,19 +759,11 @@
             "header": [],
             "url": { "raw": "{{base_url}}/reports", "host": ["{{base_url}}"], "path": ["reports"] }
           }
-        },
-        {
-          "name": "Export Reports",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": { "raw": "{{base_url}}/reports/export", "host": ["{{base_url}}"], "path": ["reports","export"] }
-          }
         }
       ]
     },
     {
-      "name": "13. Billing (Skeleton)",
+      "name": "14. Billing (Skeleton)",
       "item": [
         {
           "name": "Create Charge",
@@ -752,7 +777,7 @@
       ]
     },
     {
-      "name": "14. Admin (Holidays + SystemConfig)",
+      "name": "15. Admin (Holidays + SystemConfig)",
       "item": [
         {
           "name": "Create Holiday",
@@ -782,7 +807,7 @@
       ]
     },
     {
-      "name": "15. Audit Logs",
+      "name": "16. Audit Logs",
       "item": [
         {
           "name": "Get Audit Logs",
@@ -791,65 +816,13 @@
             "header": [],
             "url": { "raw": "{{base_url}}/api/iam/auditlogs", "host": ["{{base_url}}"], "path": ["api","iam","auditlogs"] }
           }
-        }
-      ]
-    }
-    ,
-    {
-      "name": "16. Resource Holds",
-      "item": [
-        {
-          "name": "Create Resource Hold",
-          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
-            "pm.test('created resource hold', () => pm.expect(pm.response.code).to.equal(200));",
-            "const json = pm.response.json();",
-            "pm.environment.set('resource_hold_id', json.data.holdId);",
-            "pm.test('response indicates success', () => pm.expect(json.success).to.be.true);"
-          ]}}],
-          "request": {
-            "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": { "mode": "raw", "raw": "{\n  \"resourceType\": \"Room\",\n  \"resourceId\": {{room_id}},\n  \"siteId\": {{site_id}},\n  \"startTime\": \"2026-03-16T10:00:00\",\n  \"endTime\": \"2026-03-16T11:00:00\",\n  \"reason\": \"Test hold\"\n}" },
-            "url": { "raw": "{{base_url}}/resource-holds", "host": ["{{base_url}}"], "path": ["resource-holds"] }
-          }
         },
         {
-          "name": "Get Resource Hold",
-          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
-            "pm.test('fetched resource hold', () => pm.expect(pm.response.code).to.equal(200));",
-            "const json = pm.response.json();",
-            "pm.test('holds expected id', () => pm.expect(json.data.holdId).to.eql(parseInt(pm.environment.get('resource_hold_id'))));"
-          ]}}],
+          "name": "Get Audit Logs by Action",
           "request": {
             "method": "GET",
             "header": [],
-            "url": { "raw": "{{base_url}}/resource-holds/{{resource_hold_id}}", "host": ["{{base_url}}"], "path": ["resource-holds","{{resource_hold_id}}"] }
-          }
-        },
-        {
-          "name": "Search Resource Holds",
-          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
-            "pm.test('search returned list', () => pm.expect(pm.response.code).to.equal(200));",
-            "const json = pm.response.json();",
-            "pm.test('list contains at least one hold', () => pm.expect(json.data.length).to.be.at.least(1));"
-          ]}}],
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": { "raw": "{{base_url}}/resource-holds?siteId={{site_id}}&resourceType=Room&resourceId={{room_id}}", "host": ["{{base_url}}"], "path": ["resource-holds"], "query": [{"key":"siteId","value":"{{site_id}}"},{"key":"resourceType","value":"Room"},{"key":"resourceId","value":"{{room_id}}"}] }
-          }
-        },
-        {
-          "name": "Release Resource Hold",
-          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
-            "pm.test('released resource hold', () => pm.expect(pm.response.code).to.equal(200));",
-            "const json = pm.response.json();",
-            "pm.test('response indicates success', () => pm.expect(json.success).to.be.true);"
-          ]}}],
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": { "raw": "{{base_url}}/resource-holds/{{resource_hold_id}}", "host": ["{{base_url}}"], "path": ["resource-holds","{{resource_hold_id}}"] }
+            "url": { "raw": "{{base_url}}/api/iam/auditlogs?action=BookAppointment", "host": ["{{base_url}}"], "path": ["api","iam","auditlogs"], "query": [{"key":"action","value":"BookAppointment"}] }
           }
         }
       ]
