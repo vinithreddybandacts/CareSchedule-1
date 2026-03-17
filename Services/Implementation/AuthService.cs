@@ -4,20 +4,19 @@ using CareSchedule.Services.Interface;
 using CareSchedule.DTOs;
 using CareSchedule.Infrastructure;
 using CareSchedule.Repositories.Interface;
-using CareSchedule.Models;
 
 namespace CareSchedule.Services.Implementation
 {
     public class AuthService : IAuthService
     {
         private readonly IUserRepository _userRepo;
-        private readonly IAuditLogRepository _auditRepo;
+        private readonly IAuditLogService _auditService;
         private readonly IUnitOfWork _uow;
 
-        public AuthService(IUserRepository userRepo, IAuditLogRepository auditRepo, IUnitOfWork uow)
+        public AuthService(IUserRepository userRepo, IAuditLogService auditService, IUnitOfWork uow)
         {
             _userRepo = userRepo;
-            _auditRepo = auditRepo;
+            _auditService = auditService;
             _uow = uow;
         }
 
@@ -51,17 +50,13 @@ namespace CareSchedule.Services.Implementation
             if (string.Equals(user.Status, "Locked", StringComparison.OrdinalIgnoreCase))
                 throw new ArgumentException("User account is locked.");
 
-            // Write AuditLog (append-only)
-            var log = new AuditLog
+            _auditService.CreateAudit(new AuditLogCreateDto
             {
                 UserId = user.UserId,
                 Action = "Login",
                 Resource = "User",
-                Timestamp = DateTime.UtcNow,
                 Metadata = "{\"message\":\"User logged in\"}"
-            };
-            _auditRepo.Create(log);
-            _uow.SaveChanges();
+            });
 
             return new LoginResponseDto
             {
@@ -82,17 +77,13 @@ namespace CareSchedule.Services.Implementation
             if (user == null)
                 throw new KeyNotFoundException("User not found.");
 
-            // Write AuditLog (append-only)
-            var log = new AuditLog
+            _auditService.CreateAudit(new AuditLogCreateDto
             {
                 UserId = user.UserId,
                 Action = "Logout",
                 Resource = "User",
-                Timestamp = DateTime.UtcNow,
                 Metadata = "{\"message\":\"User logged out\"}"
-            };
-            _auditRepo.Create(log);
-            _uow.SaveChanges();
+            });
         }
     }
 }

@@ -49,6 +49,7 @@ namespace CareSchedule.Services.Implementation
             var e = new Room
             {
                 RoomName = dto.RoomName.Trim(),
+                RoomType = string.IsNullOrWhiteSpace(dto.RoomType) ? "General" : dto.RoomType.Trim(),
                 SiteId = dto.SiteId,
                 AttributesJson = dto.AttributesJson,
                 Status = "Active"
@@ -63,6 +64,7 @@ namespace CareSchedule.Services.Implementation
             if (e is null) throw new KeyNotFoundException("Room not found.");
 
             if (!string.IsNullOrWhiteSpace(dto.RoomName)) e.RoomName = dto.RoomName.Trim();
+            if (!string.IsNullOrWhiteSpace(dto.RoomType)) e.RoomType = dto.RoomType.Trim();
             if (dto.SiteId.HasValue) e.SiteId = dto.SiteId.Value;
             if (dto.AttributesJson is not null) e.AttributesJson = dto.AttributesJson;
 
@@ -88,6 +90,7 @@ namespace CareSchedule.Services.Implementation
         {
             RoomId = r.RoomId,
             RoomName = r.RoomName,
+            RoomType = r.RoomType,
             SiteId = r.SiteId,
             AttributesJson = r.AttributesJson,
             Status = r.Status

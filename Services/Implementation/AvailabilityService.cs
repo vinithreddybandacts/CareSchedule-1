@@ -28,7 +28,7 @@ namespace CareSchedule.Services.Implementation
         private readonly IAvailabilityBlockRepository _blockRepo;
         private readonly IPublishedSlotRepository _slotRepo;
         private readonly ICalendarEventRepository _calendarRepo;
-        private readonly IAuditLogRepository _auditRepo;
+        private readonly IAuditLogService _auditService;
         private readonly IUnitOfWork _uow;
         private readonly ISiteRepository _siteRepo;
         private readonly IProviderRepository _providerRepo;
@@ -40,7 +40,7 @@ namespace CareSchedule.Services.Implementation
             IAvailabilityBlockRepository blockRepo,
             IPublishedSlotRepository slotRepo,
             ICalendarEventRepository calendarRepo,
-            IAuditLogRepository auditRepo,
+            IAuditLogService auditService,
             ISiteRepository siteRepo,
             IProviderRepository providerRepo,
             IServiceRepository serviceRepo,
@@ -51,7 +51,7 @@ namespace CareSchedule.Services.Implementation
             _blockRepo     = blockRepo;
             _slotRepo      = slotRepo;
             _calendarRepo  = calendarRepo;
-            _auditRepo     = auditRepo;
+            _auditService  = auditService;
             _uow           = uow;
             _siteRepo = siteRepo;
             _providerRepo = providerRepo;
@@ -123,12 +123,10 @@ namespace CareSchedule.Services.Implementation
 
             _templateRepo.Add(entity);
 
-            _auditRepo.Create(new AuditLog
+            _auditService.CreateAudit(new AuditLogCreateDto
             {
-                UserId    = null, // attach current user later if available
                 Action    = "CreateAvailabilityTemplate",
                 Resource  = "AvailabilityTemplate",
-                Timestamp = DateTime.UtcNow,
                 Metadata  = SerializeJson(new
                 {
                     entity.ProviderId,
@@ -189,12 +187,10 @@ namespace CareSchedule.Services.Implementation
                 entity.Status
             };
 
-            _auditRepo.Create(new AuditLog
+            _auditService.CreateAudit(new AuditLogCreateDto
             {
-                UserId    = null,
                 Action    = "UpdateAvailabilityTemplate",
                 Resource  = "AvailabilityTemplate",
-                Timestamp = DateTime.UtcNow,
                 Metadata  = SerializeJson(new
                 {
                     entity.TemplateId,
@@ -270,12 +266,10 @@ namespace CareSchedule.Services.Implementation
 
             _blockRepo.Add(block);
 
-            _auditRepo.Create(new AuditLog
+            _auditService.CreateAudit(new AuditLogCreateDto
             {
-                UserId    = null,
                 Action    = "CreateAvailabilityBlock",
                 Resource  = "AvailabilityBlock",
-                Timestamp = DateTime.UtcNow,
                 Metadata  = SerializeJson(new
                 {
                     dto.ProviderId,
@@ -316,12 +310,10 @@ namespace CareSchedule.Services.Implementation
                 Status     = "Active"
             });
 
-            _auditRepo.Create(new AuditLog
+            _auditService.CreateAudit(new AuditLogCreateDto
             {
-                UserId    = null,
                 Action    = "CreateBlock_CloseSlots_ProjectCalendar",
                 Resource  = "AvailabilityBlock",
-                Timestamp = DateTime.UtcNow,
                 Metadata  = SerializeJson(new
                 {
                     blockId    = block.BlockId,
@@ -356,12 +348,10 @@ namespace CareSchedule.Services.Implementation
             // Clean the projection
             _calendarRepo.DeleteByEntity("Block", blockId);
 
-            _auditRepo.Create(new AuditLog
+            _auditService.CreateAudit(new AuditLogCreateDto
             {
-                UserId    = null,
                 Action    = "RemoveAvailabilityBlock",
                 Resource  = "AvailabilityBlock",
-                Timestamp = DateTime.UtcNow,
                 Metadata  = SerializeJson(new { blockId, previousStatus = prev })
             });
 
@@ -509,12 +499,10 @@ namespace CareSchedule.Services.Implementation
                 }
             }
 
-            _auditRepo.Create(new AuditLog
+            _auditService.CreateAudit(new AuditLogCreateDto
             {
-                UserId   = null,
                 Action    = "GenerateSlots",
                 Resource  = "PublishedSlot",
-                Timestamp = DateTime.UtcNow,
                 Metadata  = SerializeJson(new { dto.SiteId, dto.Days, inserted, skipped })
             });
 

@@ -27,7 +27,7 @@ namespace CareSchedule.Services.Implementation
         private readonly INotificationRepository _notifRepo;
         private readonly IReminderScheduleRepository _reminderRepo;
         private readonly ISystemConfigRepository _configRepo;
-        private readonly IAuditLogRepository _auditRepo;
+        private readonly IAuditLogService _auditService;
 
         public BookingService(
             CareScheduleContext db,
@@ -39,7 +39,7 @@ namespace CareSchedule.Services.Implementation
             INotificationRepository notifRepo,
             IReminderScheduleRepository reminderRepo,
             ISystemConfigRepository configRepo,
-            IAuditLogRepository auditRepo)
+            IAuditLogService auditService)
         {
             _db = db;
             _uow = uow;
@@ -50,7 +50,7 @@ namespace CareSchedule.Services.Implementation
             _notifRepo = notifRepo;
             _reminderRepo = reminderRepo;
             _configRepo = configRepo;
-            _auditRepo = auditRepo;
+            _auditService = auditService;
         }
 
         public AppointmentResponseDto Book(BookAppointmentRequestDto dto)
@@ -134,12 +134,10 @@ namespace CareSchedule.Services.Implementation
                 });
 
                 // 5) Audit
-                _auditRepo.Create(new AuditLog
+                _auditService.CreateAudit(new AuditLogCreateDto
                 {
-                    UserId = null,
                     Action = "BookAppointment",
                     Resource = "Appointment",
-                    Timestamp = DateTime.UtcNow,
                     Metadata = $"{{\"appointmentId\":{appt.AppointmentId},\"slotId\":{slot.PubSlotId}}}"
                 });
 
@@ -226,12 +224,10 @@ namespace CareSchedule.Services.Implementation
                 });
 
                 // 6) Audit
-                _auditRepo.Create(new AuditLog
+                _auditService.CreateAudit(new AuditLogCreateDto
                 {
-                    UserId = null,
                     Action = "RescheduleAppointment",
                     Resource = "Appointment",
-                    Timestamp = DateTime.UtcNow,
                     Metadata = $"{{\"appointmentId\":{appt.AppointmentId},\"newSlotId\":{newSlot.PubSlotId}}}"
                 });
 
@@ -290,12 +286,10 @@ namespace CareSchedule.Services.Implementation
                 });
 
                 // 5) Audit
-                _auditRepo.Create(new AuditLog
+                _auditService.CreateAudit(new AuditLogCreateDto
                 {
-                    UserId = null,
                     Action = "CancelAppointment",
                     Resource = "Appointment",
-                    Timestamp = DateTime.UtcNow,
                     Metadata = $"{{\"appointmentId\":{appt.AppointmentId}}}"
                 });
 
@@ -331,24 +325,84 @@ namespace CareSchedule.Services.Implementation
             return new DateTime(date.Year, date.Month, date.Day, time.Hour, time.Minute, 0, DateTimeKind.Utc);
         }
 
-         public void MarkCheckedIn(int appointmentId)
+        public void MarkCheckedIn(int appointmentId)
         {
-            throw new NotImplementedException();
+            var appt = _apptRepo.GetById(appointmentId);
+            if (appt == null) throw new KeyNotFoundException("Appointment not found.");
+            if (appt.Status != "Booked") throw new ArgumentException("INVALID_TRANSITION");
+
+            appt.Status = "CheckedIn";
+            _apptRepo.Update(appt);
+
+            _auditService.CreateAudit(new AuditLogCreateDto
+            {
+                Action = "MarkCheckedIn",
+                Resource = "Appointment",
+                Metadata = $"{{\"appointmentId\":{appointmentId}}}"
+            });
         }
 
         public void MarkComplete(int appointmentId)
         {
-            throw new NotImplementedException();
+            var appt = _apptRepo.GetById(appointmentId);
+            if (appt == null) throw new KeyNotFoundException("Appointment not found.");
+            if (appt.Status != "CheckedIn") throw new ArgumentException("INVALID_TRANSITION");
+
+            appt.Status = "Completed";
+            _apptRepo.Update(appt);
+
+            _auditService.CreateAudit(new AuditLogCreateDto
+            {
+                Action = "MarkComplete",
+                Resource = "Appointment",
+                Metadata = $"{{\"appointmentId\":{appointmentId}}}"
+            });
         }
 
         public void MarkNoShow(int appointmentId)
         {
-            throw new NotImplementedException();
+            var appt = _apptRepo.GetById(appointmentId);
+            if (appt == null) throw new KeyNotFoundException("Appointment not found.");
+            if (appt.Status is "Completed" or "Cancelled" or "NoShow")
+                throw new ArgumentException("INVALID_TRANSITION");
+
+            appt.Status = "NoShow";
+            _apptRepo.Update(appt);
+
+            _auditService.CreateAudit(new AuditLogCreateDto
+            {
+                Action = "MarkNoShow",
+                Resource = "Appointment",
+                Metadata = $"{{\"appointmentId\":{appointmentId}}}"
+            });
         }
 
         public void CancelByProvider(int appointmentId)
         {
-            throw new NotImplementedException();
+            var appt = _apptRepo.GetById(appointmentId);
+            if (appt == null) throw new KeyNotFoundException("Appointment not found.");
+            if (appt.Status is "Completed" or "Cancelled" or "NoShow")
+                throw new ArgumentException("INVALID_TRANSITION");
+
+            appt.Status = "Cancelled";
+            _apptRepo.Update(appt);
+
+            _notifRepo.Add(new Notification
+            {
+                UserId = appt.PatientId,
+                Message = $"Your appointment on {appt.SlotDate:yyyy-MM-dd} has been cancelled by the provider.",
+                Category = "Change",
+                Status = "Unread",
+                CreatedDate = DateTime.UtcNow
+            });
+
+            _auditService.CreateAudit(new AuditLogCreateDto
+            {
+                Action = "CancelByProvider",
+                Resource = "Appointment",
+                Metadata = $"{{\"appointmentId\":{appointmentId}}}"
+            });
+            _uow.SaveChanges();
         }
 
         private static AppointmentResponseDto Map(Appointment a)

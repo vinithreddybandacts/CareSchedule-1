@@ -12,12 +12,12 @@ namespace CareSchedule.Services.Implementation
     public class ResourceHoldService : IResourceHoldService
     {
         private readonly IResourceHoldRepository _holdRepo;
-        private readonly IAuditLogRepository _auditRepo;
+        private readonly IAuditLogService _auditService;
 
-        public ResourceHoldService(IResourceHoldRepository holdRepo, IAuditLogRepository auditRepo)
+        public ResourceHoldService(IResourceHoldRepository holdRepo, IAuditLogService auditService)
         {
             _holdRepo = holdRepo;
-            _auditRepo = auditRepo;
+            _auditService = auditService;
         }
 
         public ResourceHoldResponseDto Create(ResourceHoldCreateDto dto)
@@ -48,11 +48,10 @@ namespace CareSchedule.Services.Implementation
 
             _holdRepo.Add(entity);
 
-            _auditRepo.Create(new AuditLog
+            _auditService.CreateAudit(new AuditLogCreateDto
             {
-                Resource = "ResourceHold",
                 Action = "Create",
-                Timestamp = DateTime.UtcNow,
+                Resource = "ResourceHold",
                 Metadata = $"HoldId={entity.HoldId}; {entity.ResourceType} #{entity.ResourceId} at site #{entity.SiteId}"
             });
 
@@ -80,11 +79,10 @@ namespace CareSchedule.Services.Implementation
 
             _holdRepo.Update(entity);
 
-            _auditRepo.Create(new AuditLog
+            _auditService.CreateAudit(new AuditLogCreateDto
             {
-                Resource = "ResourceHold",
                 Action = "Update",
-                Timestamp = DateTime.UtcNow,
+                Resource = "ResourceHold",
                 Metadata = $"HoldId={holdId} updated"
             });
 
@@ -115,11 +113,10 @@ namespace CareSchedule.Services.Implementation
             entity.Status = "Released";
             _holdRepo.Update(entity);
 
-            _auditRepo.Create(new AuditLog
+            _auditService.CreateAudit(new AuditLogCreateDto
             {
-                Resource = "ResourceHold",
                 Action = "Release",
-                Timestamp = DateTime.UtcNow,
+                Resource = "ResourceHold",
                 Metadata = $"HoldId={holdId} released"
             });
         }

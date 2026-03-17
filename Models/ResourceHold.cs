@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace CareSchedule.Models;
 
@@ -11,6 +12,7 @@ public partial class ResourceHold
 
     public int ResourceId { get; set; }
 
+[Required]
     public int SiteId { get; set; }
 
     public DateTime StartTime { get; set; }

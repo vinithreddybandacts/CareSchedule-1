@@ -14,18 +14,18 @@ namespace CareSchedule.Services.Implementation
     {
         private readonly ICapacityRuleRepository _capacityRepo;
         private readonly ISlaRepository _slaRepo;
-        private readonly IAuditLogRepository _auditRepo;
+        private readonly IAuditLogService _auditService;
         private readonly IUnitOfWork _uow;
 
         public RulesService(
             ICapacityRuleRepository capacityRepo,
             ISlaRepository slaRepo,
-            IAuditLogRepository auditRepo,
+            IAuditLogService auditService,
             IUnitOfWork uow)
         {
             _capacityRepo = capacityRepo;
             _slaRepo = slaRepo;
-            _auditRepo = auditRepo;
+            _auditService = auditService;
             _uow = uow;
         }
 
@@ -56,12 +56,10 @@ namespace CareSchedule.Services.Implementation
 
             _capacityRepo.Add(entity);
 
-            _auditRepo.Create(new AuditLog
+            _auditService.CreateAudit(new AuditLogCreateDto
             {
-                UserId = null,
                 Action = "CREATE",
                 Resource = "CapacityRule",
-                Timestamp = DateTime.UtcNow,
                 Metadata = $"{{\"ruleId\":{entity.RuleId},\"scope\":\"{entity.Scope}\"}}"
             });
 
@@ -92,12 +90,10 @@ namespace CareSchedule.Services.Implementation
 
             _capacityRepo.Update(entity);
 
-            _auditRepo.Create(new AuditLog
+            _auditService.CreateAudit(new AuditLogCreateDto
             {
-                UserId = null,
                 Action = "UPDATE",
                 Resource = "CapacityRule",
-                Timestamp = DateTime.UtcNow,
                 Metadata = $"{{\"ruleId\":{entity.RuleId}}}"
             });
 
@@ -128,12 +124,10 @@ namespace CareSchedule.Services.Implementation
                 entity.Status = "Inactive";
                 _capacityRepo.Update(entity);
 
-                _auditRepo.Create(new AuditLog
+                _auditService.CreateAudit(new AuditLogCreateDto
                 {
-                    UserId = null,
                     Action = "DEACTIVATE",
                     Resource = "CapacityRule",
-                    Timestamp = DateTime.UtcNow,
                     Metadata = $"{{\"ruleId\":{entity.RuleId}}}"
                 });
 
@@ -161,12 +155,10 @@ namespace CareSchedule.Services.Implementation
 
             _slaRepo.Add(entity);
 
-            _auditRepo.Create(new AuditLog
+            _auditService.CreateAudit(new AuditLogCreateDto
             {
-                UserId = null,
                 Action = "CREATE",
                 Resource = "SLA",
-                Timestamp = DateTime.UtcNow,
                 Metadata = $"{{\"slaId\":{entity.Slaid},\"metric\":\"{entity.Metric}\"}}"
             });
 
@@ -192,12 +184,10 @@ namespace CareSchedule.Services.Implementation
 
             _slaRepo.Update(entity);
 
-            _auditRepo.Create(new AuditLog
+            _auditService.CreateAudit(new AuditLogCreateDto
             {
-                UserId = null,
                 Action = "UPDATE",
                 Resource = "SLA",
-                Timestamp = DateTime.UtcNow,
                 Metadata = $"{{\"slaId\":{entity.Slaid}}}"
             });
 
@@ -228,12 +218,10 @@ namespace CareSchedule.Services.Implementation
                 entity.Status = "Inactive";
                 _slaRepo.Update(entity);
 
-                _auditRepo.Create(new AuditLog
+                _auditService.CreateAudit(new AuditLogCreateDto
                 {
-                    UserId = null,
                     Action = "DEACTIVATE",
                     Resource = "SLA",
-                    Timestamp = DateTime.UtcNow,
                     Metadata = $"{{\"slaId\":{entity.Slaid}}}"
                 });
 
