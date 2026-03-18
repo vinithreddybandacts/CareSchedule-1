@@ -8,15 +8,8 @@ namespace CareSchedule.API.Controllers
     [ApiController]
     [Route("api/masterdata/services")]
     [Produces("application/json")]
-    public class ServicesController : ControllerBase
+    public class ServicesController(IServiceMasterService _service) : ControllerBase
     {
-        private readonly IServiceMasterService _service;
-
-        public ServicesController(IServiceMasterService service)
-        {
-            _service = service;
-        }
-
         [HttpGet]
         public IActionResult GetAll()
         {

@@ -5,26 +5,18 @@ using CareSchedule.Services.Interface;
 
 namespace CareSchedule.Services.Implementation
 {
-    public class ServiceMasterService : IServiceMasterService
+    public class ServiceMasterService(IServiceRepository _servicerepo) : IServiceMasterService
     {
         private static readonly string[] ValidVisitTypes = { "New", "FollowUp", "Procedure" };
-
-        private readonly IServiceRepository _repo;
-
-        public ServiceMasterService(IServiceRepository repo)
-        {
-            _repo = repo;
-        }
-
         public List<ServiceDto> GetAllServices()
         {
-            var services = _repo.GetAll();
+            var services = _servicerepo.GetAll();
             return services.Select(Map).ToList();
         }
 
         public ServiceDto? GetService(int id)
         {
-            var service = _repo.GetById(id);
+            var service = _servicerepo.GetById(id);
             return service is null ? null : Map(service);
         }
 
@@ -49,13 +41,13 @@ namespace CareSchedule.Services.Implementation
                 Status = "Active"
             };
 
-            entity = _repo.Create(entity);
+            entity = _servicerepo.Create(entity);
             return Map(entity);
         }
 
         public ServiceDto UpdateService(int id, ServiceUpdateDto dto)
         {
-            var entity = _repo.GetById(id)
+            var entity = _servicerepo.GetById(id)
                 ?? throw new KeyNotFoundException("Service not found.");
 
             if (dto.Name is not null)
@@ -81,30 +73,30 @@ namespace CareSchedule.Services.Implementation
             if (dto.BufferAfterMin.HasValue)
                 entity.BufferAfterMin = dto.BufferAfterMin.Value;
 
-            _repo.Update(entity);
+            _servicerepo.Update(entity);
             return Map(entity);
         }
 
         public void DeactivateService(int id)
         {
-            var entity = _repo.GetById(id)
+            var entity = _servicerepo.GetById(id)
                 ?? throw new KeyNotFoundException("Service not found.");
 
             if (entity.Status == "Inactive") return;
 
             entity.Status = "Inactive";
-            _repo.Update(entity);
+            _servicerepo.Update(entity);
         }
 
         public void ActivateService(int id)
         {
-            var entity = _repo.GetById(id)
+            var entity = _servicerepo.GetById(id)
                 ?? throw new KeyNotFoundException("Service not found.");
 
             if (entity.Status == "Active") return;
 
             entity.Status = "Active";
-            _repo.Update(entity);
+            _servicerepo.Update(entity);
         }
 
         private static ServiceDto Map(Service s) => new()

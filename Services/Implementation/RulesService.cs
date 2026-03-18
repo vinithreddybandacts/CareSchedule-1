@@ -10,25 +10,12 @@ using CareSchedule.Services.Interface;
 
 namespace CareSchedule.Services.Implementation
 {
-    public class RulesService : IRulesService
+    public class RulesService(
+            ICapacityRuleRepository _capacityRepo,
+            ISlaRepository _slaRepo,
+            IAuditLogService _auditService,
+            IUnitOfWork _uow) : IRulesService
     {
-        private readonly ICapacityRuleRepository _capacityRepo;
-        private readonly ISlaRepository _slaRepo;
-        private readonly IAuditLogService _auditService;
-        private readonly IUnitOfWork _uow;
-
-        public RulesService(
-            ICapacityRuleRepository capacityRepo,
-            ISlaRepository slaRepo,
-            IAuditLogService auditService,
-            IUnitOfWork uow)
-        {
-            _capacityRepo = capacityRepo;
-            _slaRepo = slaRepo;
-            _auditService = auditService;
-            _uow = uow;
-        }
-
         public CapacityRuleResponseDto CreateCapacityRule(CreateCapacityRuleDto dto)
         {
             if (string.IsNullOrWhiteSpace(dto.Scope))

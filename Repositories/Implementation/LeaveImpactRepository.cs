@@ -6,15 +6,8 @@ using CareSchedule.Repositories.Interface;
 
 namespace CareSchedule.Repositories.Implementation
 {
-    public class LeaveImpactRepository : ILeaveImpactRepository
+    public class LeaveImpactRepository(CareScheduleContext _db) : ILeaveImpactRepository
     {
-        private readonly CareScheduleContext _db;
-
-        public LeaveImpactRepository(CareScheduleContext db)
-        {
-            _db = db;
-        }
-
         public void Add(LeaveImpact entity)
         {
             throw new NotImplementedException();

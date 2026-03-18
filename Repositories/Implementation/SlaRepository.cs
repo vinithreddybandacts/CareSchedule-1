@@ -7,15 +7,8 @@ using CareSchedule.Repositories.Interface;
 
 namespace CareSchedule.Repositories.Implementation
 {
-    public class SlaRepository : ISlaRepository
+    public class SlaRepository(CareScheduleContext _db) : ISlaRepository
     {
-        private readonly CareScheduleContext _db;
-
-        public SlaRepository(CareScheduleContext db)
-        {
-            _db = db;
-        }
-
         public void Add(Sla entity)
         {
             _db.Slas.Add(entity);

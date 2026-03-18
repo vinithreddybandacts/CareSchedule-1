@@ -6,15 +6,8 @@ using CareSchedule.Repositories.Interface;
 
 namespace CareSchedule.Repositories.Implementation
 {
-    public class ChargeRefRepository : IChargeRefRepository
+    public class ChargeRefRepository(CareScheduleContext _db) : IChargeRefRepository
     {
-        private readonly CareScheduleContext _db;
-
-        public ChargeRefRepository(CareScheduleContext db)
-        {
-            _db = db;
-        }
-
         public void Add(ChargeRef entity)
         {
             throw new NotImplementedException();

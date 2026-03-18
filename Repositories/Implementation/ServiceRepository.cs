@@ -5,15 +5,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CareSchedule.Repositories.Implementation
 {
-    public class ServiceRepository : IServiceRepository
+    public class ServiceRepository(CareScheduleContext _db) : IServiceRepository
     {
-        private readonly CareScheduleContext _db;
-
-        public ServiceRepository(CareScheduleContext db)
-        {
-            _db = db;
-        }
-
         public List<Service> GetAll()
         {
             return _db.Services.AsNoTracking().ToList();

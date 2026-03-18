@@ -5,15 +5,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CareSchedule.Repositories.Implementation
 {
-    public class SystemConfigRepository : ISystemConfigRepository
+    public class SystemConfigRepository(CareScheduleContext _db) : ISystemConfigRepository
     {
-        private readonly CareScheduleContext _db;
-
-        public SystemConfigRepository(CareScheduleContext db)
-        {
-            _db = db;
-        }
-
         public (List<SystemConfig> Items, int Total) Search(
             string? key,
             string? scope,

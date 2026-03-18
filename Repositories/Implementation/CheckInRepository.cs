@@ -8,15 +8,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CareSchedule.Repositories.Implementation
 {
-    public class CheckInRepository : ICheckInRepository
+    public class CheckInRepository(CareScheduleContext _db) : ICheckInRepository
     {
-        private readonly CareScheduleContext _db;
-
-        public CheckInRepository(CareScheduleContext db)
-        {
-            _db = db;
-        }
-
         public void Add(CheckIn entity)
         {
             _db.CheckIns.Add(entity);

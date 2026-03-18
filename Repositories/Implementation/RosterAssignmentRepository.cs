@@ -7,15 +7,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CareSchedule.Repositories.Implementation
 {
-    public class RosterAssignmentRepository : IRosterAssignmentRepository
+    public class RosterAssignmentRepository(CareScheduleContext _db) : IRosterAssignmentRepository
     {
-        private readonly CareScheduleContext _db;
-
-        public RosterAssignmentRepository(CareScheduleContext db)
-        {
-            _db = db;
-        }
-
         public void Add(RosterAssignment entity)
         {
             _db.RosterAssignments.Add(entity);

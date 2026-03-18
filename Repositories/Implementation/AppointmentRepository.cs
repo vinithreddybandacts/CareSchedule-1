@@ -7,11 +7,8 @@ using CareSchedule.Repositories.Interface;
 
 namespace CareSchedule.Repositories.Implementation
 {
-    public class AppointmentRepository : IAppointmentRepository
+    public class AppointmentRepository(CareScheduleContext _db) : IAppointmentRepository
     {
-        private readonly CareScheduleContext _db;
-        public AppointmentRepository(CareScheduleContext db) { _db = db; }
-
         public void Add(Appointment entity) => _db.Appointments.Add(entity);
         public void Update(Appointment entity) => _db.Appointments.Update(entity);
 

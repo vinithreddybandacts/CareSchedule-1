@@ -6,15 +6,8 @@ using CareSchedule.Services.Interface;
 
 namespace CareSchedule.Services.Implementation
 {
-    public class ReportService : IReportService
+    public class ReportService(IOpsReportRepository _reportRepo) : IReportService
     {
-        private readonly IOpsReportRepository _reportRepo;
-
-        public ReportService(IOpsReportRepository reportRepo)
-        {
-            _reportRepo = reportRepo;
-        }
-
         public IEnumerable<OpsReportResponseDto> Search(ReportSearchDto dto)
         {
             throw new NotImplementedException();

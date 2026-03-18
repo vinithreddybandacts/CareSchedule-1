@@ -5,15 +5,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CareSchedule.Repositories.Implementation
 {
-    public class ProviderServiceRepository : IProviderServiceRepository
+    public class ProviderServiceRepository(CareScheduleContext _db) : IProviderServiceRepository
     {
-        private readonly CareScheduleContext _db;
-
-        public ProviderServiceRepository(CareScheduleContext db)
-        {
-            _db = db;
-        }
-
         public List<ProviderService> GetByProviderId(int providerId)
         {
             return _db.ProviderServices

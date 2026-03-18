@@ -9,15 +9,8 @@ using CareSchedule.Services.Interface;
 
 namespace CareSchedule.Services.Implementation
 {
-    public class CalendarService : ICalendarService
+    public class CalendarService(ICalendarEventRepository _calendarRepo) : ICalendarService
     {
-        private readonly ICalendarEventRepository _calendarRepo;
-
-        public CalendarService(ICalendarEventRepository calendarRepo)
-        {
-            _calendarRepo = calendarRepo;
-        }
-
         public IEnumerable<CalendarEventResponseDto> GetByProvider(int providerId, string date)
         {
             if (providerId <= 0)

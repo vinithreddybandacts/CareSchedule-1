@@ -9,18 +9,18 @@ namespace CareSchedule.API.Controllers
     [Route("availability-templates")]
     public class AvailabilityTemplatesController : ControllerBase
     {
-        private readonly IAvailabilityService _availability;
+        private readonly IAvailabilityService _availabilityservice;
 
         public AvailabilityTemplatesController(IAvailabilityService availability)
         {
-            _availability = availability;
+            _availabilityservice = availability;
         }
 
         // POST /availability-templates
         [HttpPost]
         public ActionResult<ApiResponse<IdResponseDto>> Create([FromBody] CreateAvailabilityTemplateRequestDto dto)
         {
-            var id = _availability.CreateTemplate(dto);
+            var id = _availabilityservice.CreateTemplate(dto);
             return ApiResponse<IdResponseDto>.Ok(new IdResponseDto { Id = id }, "Template created.");
         }
 
@@ -29,7 +29,7 @@ namespace CareSchedule.API.Controllers
         public ActionResult<ApiResponse<object>> Update(int templateId, [FromBody] UpdateAvailabilityTemplateRequestDto dto)
         {
             dto.TemplateId = templateId;
-            _availability.UpdateTemplate(dto);
+            _availabilityservice.UpdateTemplate(dto);
             return ApiResponse<object>.Ok(null, "Template updated.");
         }
 
@@ -37,7 +37,7 @@ namespace CareSchedule.API.Controllers
         [HttpGet]
         public ActionResult<ApiResponse<IEnumerable<AvailabilityTemplateResponseDto>>> List([FromQuery] int providerId, [FromQuery] int siteId)
         {
-            var data = _availability.ListTemplates(providerId, siteId);
+            var data = _availabilityservice.ListTemplates(providerId, siteId);
             return ApiResponse<IEnumerable<AvailabilityTemplateResponseDto>>.Ok(data, "Templates fetched.");
         }
     }

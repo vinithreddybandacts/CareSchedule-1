@@ -5,22 +5,11 @@ using CareSchedule.Services.Interface;
 
 namespace CareSchedule.Services.Implementation
 {
-    public class ProviderServiceMappingService : IProviderServiceMappingService
+    public class ProviderServiceMappingService(
+            IProviderServiceRepository _psRepo,
+            IProviderRepository _providerRepo,
+            IServiceRepository _serviceRepo) : IProviderServiceMappingService
     {
-        private readonly IProviderServiceRepository _psRepo;
-        private readonly IProviderRepository _providerRepo;
-        private readonly IServiceRepository _serviceRepo;
-
-        public ProviderServiceMappingService(
-            IProviderServiceRepository psRepo,
-            IProviderRepository providerRepo,
-            IServiceRepository serviceRepo)
-        {
-            _psRepo = psRepo;
-            _providerRepo = providerRepo;
-            _serviceRepo = serviceRepo;
-        }
-
         public ProviderServiceDto AssignServiceToProvider(ProviderServiceCreateDto dto)
         {
             var provider = _providerRepo.GetById(dto.ProviderId)

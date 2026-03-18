@@ -7,36 +7,16 @@ using CareSchedule.Services.Interface;
 
 namespace CareSchedule.Services.Implementation
 {
-    public class RosterService : IRosterService
+    public class RosterService(
+            IShiftTemplateRepository _shiftRepo,
+            IRosterRepository _rosterRepo,
+            IRosterAssignmentRepository _assignRepo,
+            IOnCallCoverageRepository _onCallRepo,
+            INotificationRepository _notifRepo,
+            IAuditLogService _auditService,
+            IUnitOfWork _uow) : IRosterService
     {
-        private readonly IShiftTemplateRepository _shiftRepo;
-        private readonly IRosterRepository _rosterRepo;
-        private readonly IRosterAssignmentRepository _assignRepo;
-        private readonly IOnCallCoverageRepository _onCallRepo;
-        private readonly INotificationRepository _notifRepo;
-        private readonly IAuditLogService _auditService;
-        private readonly IUnitOfWork _uow;
-
-        public RosterService(
-            IShiftTemplateRepository shiftRepo,
-            IRosterRepository rosterRepo,
-            IRosterAssignmentRepository assignRepo,
-            IOnCallCoverageRepository onCallRepo,
-            INotificationRepository notifRepo,
-            IAuditLogService auditService,
-            IUnitOfWork uow)
-        {
-            _shiftRepo = shiftRepo;
-            _rosterRepo = rosterRepo;
-            _assignRepo = assignRepo;
-            _onCallRepo = onCallRepo;
-            _notifRepo = notifRepo;
-            _auditService = auditService;
-            _uow = uow;
-        }
-
         // --------- Shift Templates ---------
-
         public ShiftTemplateResponseDto CreateShiftTemplate(CreateShiftTemplateDto dto)
         {
             throw new NotImplementedException();

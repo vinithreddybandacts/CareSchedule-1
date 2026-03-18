@@ -5,15 +5,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CareSchedule.Repositories.Implementation
 {
-    public class HolidayRepository : IHolidayRepository
+    public class HolidayRepository(CareScheduleContext _db) : IHolidayRepository
     {
-        private readonly CareScheduleContext _db;
-
-        public HolidayRepository(CareScheduleContext db)
-        {
-            _db = db;
-        }
-
         public (List<Holiday> Items, int Total) Search(
             int? siteId,
             DateOnly? date,

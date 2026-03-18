@@ -6,22 +6,12 @@ using CareSchedule.Services.Interface;
 
 namespace CareSchedule.Services.Implementation
 {
-    public class BillingService : IBillingService
+    public class BillingService(
+            IChargeRefRepository _chargeRepo,
+            IAuditLogService _auditService,
+            IUnitOfWork _uow)
+            : IBillingService
     {
-        private readonly IChargeRefRepository _chargeRepo;
-        private readonly IAuditLogService _auditService;
-        private readonly IUnitOfWork _uow;
-
-        public BillingService(
-            IChargeRefRepository chargeRepo,
-            IAuditLogService auditService,
-            IUnitOfWork uow)
-        {
-            _chargeRepo = chargeRepo;
-            _auditService = auditService;
-            _uow = uow;
-        }
-
         public ChargeRefResponseDto CreateCharge(CreateChargeRefDto dto)
         {
             throw new NotImplementedException();

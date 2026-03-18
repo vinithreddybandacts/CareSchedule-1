@@ -7,15 +7,8 @@ using CareSchedule.Repositories.Interface;
 
 namespace CareSchedule.Repositories.Implementation
 {
-    public class CapacityRuleRepository : ICapacityRuleRepository
+    public class CapacityRuleRepository(CareScheduleContext _db) : ICapacityRuleRepository
     {
-        private readonly CareScheduleContext _db;
-
-        public CapacityRuleRepository(CareScheduleContext db)
-        {
-            _db = db;
-        }
-
         public void Add(CapacityRule entity)
         {
             _db.CapacityRules.Add(entity);

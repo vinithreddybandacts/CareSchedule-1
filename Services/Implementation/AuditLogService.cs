@@ -9,15 +9,8 @@ using CareSchedule.Services.Interface;
 
 namespace CareSchedule.Services.Implementation
 {
-    public class AuditLogService : IAuditLogService
+    public class AuditLogService(IAuditLogRepository _auditrepo) : IAuditLogService
     {
-        private readonly IAuditLogRepository _repo;
-
-        public AuditLogService(IAuditLogRepository repo)
-        {
-            _repo = repo;
-        }
-
         public List<AuditLogDto> SearchAudit(AuditLogSearchQuery query)
         {
             var page = query.Page <= 0 ? 1 : query.Page;
@@ -26,7 +19,7 @@ namespace CareSchedule.Services.Implementation
             var fromUtc = ParseIsoInstant(query.From)?.UtcDateTime;
             var toUtc   = ParseIsoInstant(query.To)?.UtcDateTime;
 
-            var (items, _) = _repo.Search(
+            var (items, _) = _auditrepo.Search(
                 userId:   query.UserId,
                 action:   query.Action,
                 resource: query.Resource,
@@ -45,7 +38,7 @@ namespace CareSchedule.Services.Implementation
 
         public AuditLogDto GetAudit(int id)
         {
-            var e = _repo.Get(id);
+            var e = _auditrepo.Get(id);
             if (e is null) throw new KeyNotFoundException("Audit log not found.");
             return Map(e);
         }
@@ -68,7 +61,7 @@ namespace CareSchedule.Services.Implementation
                 Metadata  = dto.Metadata
             };
 
-            e = _repo.Create(e);
+            e = _auditrepo.Create(e);
             return Map(e);
         }
 

@@ -5,24 +5,17 @@ using CareSchedule.Services.Interface;
 
 namespace CareSchedule.Services.Implementation
 {
-    public class ProviderMasterService : IProviderMasterService
+    public class ProviderMasterService(IProviderRepository _providerrepo) : IProviderMasterService
     {
-        private readonly IProviderRepository _repo;
-
-        public ProviderMasterService(IProviderRepository repo)
-        {
-            _repo = repo;
-        }
-
         public List<ProviderDto> GetAllProviders()
         {
-            var providers = _repo.GetAll();
+            var providers = _providerrepo.GetAll();
             return providers.Select(Map).ToList();
         }
 
         public ProviderDto? GetProvider(int id)
         {
-            var provider = _repo.GetById(id);
+            var provider = _providerrepo.GetById(id);
             return provider is null ? null : Map(provider);
         }
 
@@ -40,13 +33,13 @@ namespace CareSchedule.Services.Implementation
                 Status = "Active"
             };
 
-            entity = _repo.Create(entity);
+            entity = _providerrepo.Create(entity);
             return Map(entity);
         }
 
         public ProviderDto UpdateProvider(int id, ProviderUpdateDto dto)
         {
-            var entity = _repo.GetById(id)
+            var entity = _providerrepo.GetById(id)
                 ?? throw new KeyNotFoundException("Provider not found.");
 
             if (dto.Name is not null)
@@ -65,30 +58,30 @@ namespace CareSchedule.Services.Implementation
             if (dto.ContactInfo is not null)
                 entity.ContactInfo = dto.ContactInfo.Trim();
 
-            _repo.Update(entity);
+            _providerrepo.Update(entity);
             return Map(entity);
         }
 
         public void DeactivateProvider(int id)
         {
-            var entity = _repo.GetById(id)
+            var entity = _providerrepo.GetById(id)
                 ?? throw new KeyNotFoundException("Provider not found.");
 
             if (entity.Status == "Inactive") return;
 
             entity.Status = "Inactive";
-            _repo.Update(entity);
+            _providerrepo.Update(entity);
         }
 
         public void ActivateProvider(int id)
         {
-            var entity = _repo.GetById(id)
+            var entity = _providerrepo.GetById(id)
                 ?? throw new KeyNotFoundException("Provider not found.");
 
             if (entity.Status == "Active") return;
 
             entity.Status = "Active";
-            _repo.Update(entity);
+            _providerrepo.Update(entity);
         }
 
         private static ProviderDto Map(Provider p) => new()

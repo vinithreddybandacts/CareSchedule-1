@@ -7,37 +7,16 @@ using CareSchedule.Services.Interface;
 
 namespace CareSchedule.Services.Implementation
 {
-    public class LeaveService : ILeaveService
+    public class LeaveService(
+            ILeaveRequestRepository _leaveRepo,
+            ILeaveImpactRepository _impactRepo,
+            IAppointmentRepository _apptRepo,
+            IRosterAssignmentRepository _rosterAssignRepo,
+            INotificationRepository _notifRepo,
+            IAuditLogService _auditService,
+            IAvailabilityBlockRepository _blockRepo,
+            IUnitOfWork _uow) : ILeaveService
     {
-        private readonly ILeaveRequestRepository _leaveRepo;
-        private readonly ILeaveImpactRepository _impactRepo;
-        private readonly IAppointmentRepository _apptRepo;
-        private readonly IRosterAssignmentRepository _rosterAssignRepo;
-        private readonly INotificationRepository _notifRepo;
-        private readonly IAuditLogService _auditService;
-        private readonly IAvailabilityBlockRepository _blockRepo;
-        private readonly IUnitOfWork _uow;
-
-        public LeaveService(
-            ILeaveRequestRepository leaveRepo,
-            ILeaveImpactRepository impactRepo,
-            IAppointmentRepository apptRepo,
-            IRosterAssignmentRepository rosterAssignRepo,
-            INotificationRepository notifRepo,
-            IAuditLogService auditService,
-            IAvailabilityBlockRepository blockRepo,
-            IUnitOfWork uow)
-        {
-            _leaveRepo = leaveRepo;
-            _impactRepo = impactRepo;
-            _apptRepo = apptRepo;
-            _rosterAssignRepo = rosterAssignRepo;
-            _notifRepo = notifRepo;
-            _auditService = auditService;
-            _blockRepo = blockRepo;
-            _uow = uow;
-        }
-
         public IEnumerable<LeaveRequestResponseDto> Search(LeaveSearchDto dto)
         {
             throw new NotImplementedException();

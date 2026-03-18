@@ -7,26 +7,19 @@ namespace CareSchedule.API.Controllers
 {
     [ApiController]
     [Route("reports")]
-    public class ReportsController : ControllerBase
+    public class ReportsController(IReportService _reportservice) : ControllerBase
     {
-        private readonly IReportService _service;
-
-        public ReportsController(IReportService service)
-        {
-            _service = service;
-        }
-
         [HttpGet]
         public ActionResult<ApiResponse<IEnumerable<OpsReportResponseDto>>> Search([FromQuery] ReportSearchDto dto)
         {
-            var list = _service.Search(dto);
+            var list = _reportservice.Search(dto);
             return ApiResponse<IEnumerable<OpsReportResponseDto>>.Ok(list, "Reports fetched.");
         }
 
         [HttpGet("export")]
         public IActionResult Export([FromQuery] ReportSearchDto dto)
         {
-            var bytes = _service.Export(dto);
+            var bytes = _reportservice.Export(dto);
             return File(bytes, "application/octet-stream", "report.csv");
         }
     }

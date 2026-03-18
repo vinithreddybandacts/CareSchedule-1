@@ -9,15 +9,8 @@ using CareSchedule.Services.Interface;
 
 namespace CareSchedule.Services.Implementation
 {
-    public class SystemConfigService : ISystemConfigService
+    public class SystemConfigService(ISystemConfigRepository _systemconfigrepo) : ISystemConfigService
     {
-        private readonly ISystemConfigRepository _repo;
-
-        public SystemConfigService(ISystemConfigRepository repo)
-        {
-            _repo = repo;
-        }
-
         private static string Iso(DateTime utc)
         {
             return DateTime.SpecifyKind(utc, DateTimeKind.Utc)
@@ -31,7 +24,7 @@ namespace CareSchedule.Services.Implementation
             var sortBy = string.IsNullOrWhiteSpace(q.SortBy) ? "updateddate" : q.SortBy;
             var sortDir = string.IsNullOrWhiteSpace(q.SortDir) ? "desc" : q.SortDir;
 
-            var (items, _) = _repo.Search(q.Key, q.Scope, page, pageSize, sortBy, sortDir);
+            var (items, _) = _systemconfigrepo.Search(q.Key, q.Scope, page, pageSize, sortBy, sortDir);
 
             var list = new List<SystemConfigDto>(items.Count);
             foreach (var c in items) list.Add(Map(c));
@@ -40,7 +33,7 @@ namespace CareSchedule.Services.Implementation
 
         public SystemConfigDto Get(int id)
         {
-            var e = _repo.Get(id);
+            var e = _systemconfigrepo.Get(id);
             if (e is null) throw new KeyNotFoundException("System config not found.");
             return Map(e);
         }
@@ -61,13 +54,13 @@ namespace CareSchedule.Services.Implementation
                 UpdatedDate = DateTime.UtcNow
             };
 
-            e = _repo.Create(e);
+            e = _systemconfigrepo.Create(e);
             return Map(e);
         }
 
         public SystemConfigDto Update(int id, SystemConfigUpdateDto dto)
         {
-            var e = _repo.Get(id);
+            var e = _systemconfigrepo.Get(id);
             if (e is null) throw new KeyNotFoundException("System config not found.");
 
             if (dto.Value is not null) e.Value = dto.Value.Trim();
@@ -75,14 +68,14 @@ namespace CareSchedule.Services.Implementation
             if (dto.UpdatedBy.HasValue) e.UpdatedBy = dto.UpdatedBy;
 
             e.UpdatedDate = DateTime.UtcNow;
-            _repo.Update(e);
+            _systemconfigrepo.Update(e);
 
             return Map(e);
         }
 
         public void Delete(int id)
         {
-            _repo.Delete(id);
+            _systemconfigrepo.Delete(id);
         }
 
         private static SystemConfigDto Map(SystemConfig c) => new SystemConfigDto

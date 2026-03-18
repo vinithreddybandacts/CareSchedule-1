@@ -7,15 +7,8 @@ using CareSchedule.Repositories.Interface;
 
 namespace CareSchedule.Repositories.Implementation
 {
-    public class WaitlistRepository : IWaitlistRepository
+    public class WaitlistRepository(CareScheduleContext _db) : IWaitlistRepository
     {
-        private readonly CareScheduleContext _db;
-
-        public WaitlistRepository(CareScheduleContext db)
-        {
-            _db = db;
-        }
-
         public void Add(Waitlist entity)
         {
             _db.Waitlists.Add(entity);

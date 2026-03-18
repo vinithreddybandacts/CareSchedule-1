@@ -6,15 +6,8 @@ using CareSchedule.Repositories.Interface;
 
 namespace CareSchedule.Repositories.Implementation
 {
-    public class LeaveRequestRepository : ILeaveRequestRepository
+    public class LeaveRequestRepository(CareScheduleContext _db) : ILeaveRequestRepository
     {
-        private readonly CareScheduleContext _db;
-
-        public LeaveRequestRepository(CareScheduleContext db)
-        {
-            _db = db;
-        }
-
         public void Add(LeaveRequest entity)
         {
             throw new NotImplementedException();

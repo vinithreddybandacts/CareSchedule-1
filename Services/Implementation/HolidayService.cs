@@ -6,15 +6,8 @@ using CareSchedule.Services.Interface;
 
 namespace CareSchedule.Services.Implementation
 {
-    public class HolidayService : IHolidayService
+    public class HolidayService(IHolidayRepository _holidayrepo) : IHolidayService
     {
-        private readonly IHolidayRepository _repo;
-
-        public HolidayService(IHolidayRepository repo)
-        {
-            _repo = repo;
-        }
-
         public List<HolidayDto> SearchHoliday(HolidaySearchQuery query)
         {
             var page = query.Page <= 0 ? 1 : query.Page;
@@ -24,7 +17,7 @@ namespace CareSchedule.Services.Implementation
             DateOnly? from = ParseDate(query.From);
             DateOnly? to   = ParseDate(query.To);
 
-            var (items, _) = _repo.Search(
+            var (items, _) = _holidayrepo.Search(
                 siteId:   query.SiteId,
                 date:     date,
                 from:     from,
@@ -41,7 +34,7 @@ namespace CareSchedule.Services.Implementation
 
         public HolidayDto GetHoliday(int id)
         {
-            var entity = _repo.Get(id);
+            var entity = _holidayrepo.Get(id);
             if (entity is null) throw new KeyNotFoundException("Holiday not found.");
             return Map(entity);
         }
@@ -49,7 +42,7 @@ namespace CareSchedule.Services.Implementation
         public HolidayDto GetHolidayByDate(int siteId, string date)
         {
             var d = ParseDate(date) ?? throw new ArgumentException("Invalid date. Use yyyy-MM-dd.");
-            var entity = _repo.GetByDate(siteId, d);
+            var entity = _holidayrepo.GetByDate(siteId, d);
             if (entity is null) throw new KeyNotFoundException("Holiday not found.");
             return Map(entity);
         }
@@ -66,13 +59,13 @@ namespace CareSchedule.Services.Implementation
                 Status = "Active"
             };
 
-            entity = _repo.Create(entity);
+            entity = _holidayrepo.Create(entity);
             return Map(entity);
         }
 
         public HolidayDto UpdateHoliday(int id, HolidayUpdateDto dto)
         {
-            var entity = _repo.Get(id);
+            var entity = _holidayrepo.Get(id);
             if (entity is null) throw new KeyNotFoundException("Holiday not found.");
 
             if (dto.SiteId.HasValue) entity.SiteId = dto.SiteId.Value;
@@ -90,31 +83,31 @@ namespace CareSchedule.Services.Implementation
             if (!string.IsNullOrWhiteSpace(dto.Status))
                 entity.Status = dto.Status.Trim();
 
-            _repo.Update(entity);
+            _holidayrepo.Update(entity);
             return Map(entity);
         }
 
         public void DeactivateHoliday(int id)
         {
-            var entity = _repo.Get(id);
+            var entity = _holidayrepo.Get(id);
             if (entity is null) throw new KeyNotFoundException("Holiday not found.");
 
             if (!string.Equals(entity.Status, "Inactive", StringComparison.Ordinal))
             {
                 entity.Status = "Inactive";
-                _repo.Update(entity);
+                _holidayrepo.Update(entity);
             }
         }
 
         public void ActivateHoliday(int id)
         {
-            var entity = _repo.Get(id);
+            var entity = _holidayrepo.Get(id);
             if (entity is null) throw new KeyNotFoundException("Holiday not found.");
 
             if (!string.Equals(entity.Status, "Active", StringComparison.Ordinal))
             {
                 entity.Status = "Active";
-                _repo.Update(entity);
+                _holidayrepo.Update(entity);
             }
         }
 

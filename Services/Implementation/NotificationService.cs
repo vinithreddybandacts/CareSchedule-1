@@ -9,19 +9,10 @@ using CareSchedule.Services.Interface;
 
 namespace CareSchedule.Services.Implementation
 {
-    public class NotificationService : INotificationService
+    public class NotificationService(
+            INotificationRepository _notifRepo,
+            IUnitOfWork _uow) : INotificationService
     {
-        private readonly INotificationRepository _notifRepo;
-        private readonly IUnitOfWork _uow;
-
-        public NotificationService(
-            INotificationRepository notifRepo,
-            IUnitOfWork uow)
-        {
-            _notifRepo = notifRepo;
-            _uow = uow;
-        }
-
         public IEnumerable<NotificationResponseDto> GetByUserId(int userId)
         {
             if (userId <= 0) throw new ArgumentException("Invalid userId.");

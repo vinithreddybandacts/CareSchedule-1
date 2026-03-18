@@ -7,24 +7,21 @@ namespace CareSchedule.API.Controllers
 {
     [ApiController]
     [Route("api/masterdata/rooms")]
-    public class RoomsController : ControllerBase
+    public class RoomsController(IRoomService _roomservice) : ControllerBase
     {
-        private readonly IRoomService _service;
-        public RoomsController(IRoomService service) => _service = service;
-
         [HttpGet]
         public IActionResult Search([FromQuery] RoomSearchQuery q)
-            => Ok(ApiResponse<object>.Ok(_service.SearchRoom(q)));
+            => Ok(ApiResponse<object>.Ok(_roomservice.SearchRoom(q)));
 
         [HttpGet("{id:int}")]
         public ActionResult<ApiResponse<RoomDto>> Get(int id)
-            => Ok(ApiResponse<RoomDto>.Ok(_service.GetRoom(id)));
+            => Ok(ApiResponse<RoomDto>.Ok(_roomservice.GetRoom(id)));
 
         [HttpPost]
         public ActionResult<ApiResponse<RoomDto>> Create([FromBody] RoomCreateDto dto)
         {
             if (dto is null) return BadRequest(ApiResponse<object>.Fail(new { code = "BAD_REQUEST" }, "Request body is required."));
-            var created = _service.CreateRoom(dto);
+            var created = _roomservice.CreateRoom(dto);
             return CreatedAtAction(nameof(Get), new { id = created.RoomId }, ApiResponse<RoomDto>.Ok(created, "Room created."));
         }
 
@@ -32,20 +29,20 @@ namespace CareSchedule.API.Controllers
         public ActionResult<ApiResponse<RoomDto>> Update(int id, [FromBody] RoomUpdateDto dto)
         {
             if (dto is null) return BadRequest(ApiResponse<object>.Fail(new { code = "BAD_REQUEST" }, "Request body is required."));
-            return Ok(ApiResponse<RoomDto>.Ok(_service.UpdateRoom(id, dto), "Room updated."));
+            return Ok(ApiResponse<RoomDto>.Ok(_roomservice.UpdateRoom(id, dto), "Room updated."));
         }
 
         [HttpDelete("{id:int}")]
         public ActionResult<ApiResponse<object>> Deactivate(int id)
         {
-            _service.DeactivateRoom(id);
+            _roomservice.DeactivateRoom(id);
             return Ok(ApiResponse<object>.Ok(new { id }, "Room deactivated."));
         }
 
         [HttpPost("{id:int}/activate")]
         public ActionResult<ApiResponse<object>> Activate(int id)
         {
-            _service.ActivateRoom(id);
+            _roomservice.ActivateRoom(id);
             return Ok(ApiResponse<object>.Ok(new { id }, "Room activated."));
         }
     }

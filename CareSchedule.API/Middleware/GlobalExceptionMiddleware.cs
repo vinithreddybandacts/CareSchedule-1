@@ -4,17 +4,8 @@ using CareSchedule.API.Contracts;
 
 namespace CareSchedule.API.Middleware
 {
-    public class GlobalExceptionMiddleware
+    public class GlobalExceptionMiddleware(RequestDelegate _next, IHostEnvironment _env)
     {
-        private readonly RequestDelegate _next;
-        private readonly IHostEnvironment _env;
-
-        public GlobalExceptionMiddleware(RequestDelegate next, IHostEnvironment env)
-        {
-            _next = next;
-            _env = env;
-        }
-
         public async Task InvokeAsync(HttpContext context)
         {
             try

@@ -14,45 +14,19 @@ using CareSchedule.Repositories.Interface;
 
 namespace CareSchedule.Services.Implementation
 {
-    public class BookingService : IBookingService
+    public class BookingService(
+            CareScheduleContext _db,
+            IUnitOfWork _uow,
+            IAppointmentRepository _apptRepo,
+            IAppointmentChangeRepository _changeRepo,
+            IPublishedSlotBookingRepository _slotRepo,
+            ICalendarEventRepository _calendarRepo,
+            INotificationRepository _notifRepo,
+            IReminderScheduleRepository _reminderRepo,
+            ISystemConfigRepository _configRepo,
+            IAuditLogService _auditService)
+            : IBookingService
     {
-        private readonly CareScheduleContext _db; // for transaction
-        private readonly IUnitOfWork _uow;
-
-        // Repos (data access only; no SaveChanges inside repos)
-        private readonly IAppointmentRepository _apptRepo;
-        private readonly IAppointmentChangeRepository _changeRepo;
-        private readonly IPublishedSlotBookingRepository _slotRepo;
-        private readonly ICalendarEventRepository _calendarRepo;
-        private readonly INotificationRepository _notifRepo;
-        private readonly IReminderScheduleRepository _reminderRepo;
-        private readonly ISystemConfigRepository _configRepo;
-        private readonly IAuditLogService _auditService;
-
-        public BookingService(
-            CareScheduleContext db,
-            IUnitOfWork uow,
-            IAppointmentRepository apptRepo,
-            IAppointmentChangeRepository changeRepo,
-            IPublishedSlotBookingRepository slotRepo,
-            ICalendarEventRepository calendarRepo,
-            INotificationRepository notifRepo,
-            IReminderScheduleRepository reminderRepo,
-            ISystemConfigRepository configRepo,
-            IAuditLogService auditService)
-        {
-            _db = db;
-            _uow = uow;
-            _apptRepo = apptRepo;
-            _changeRepo = changeRepo;
-            _slotRepo = slotRepo;
-            _calendarRepo = calendarRepo;
-            _notifRepo = notifRepo;
-            _reminderRepo = reminderRepo;
-            _configRepo = configRepo;
-            _auditService = auditService;
-        }
-
         public AppointmentResponseDto Book(BookAppointmentRequestDto dto)
         {
             if (dto.PublishedSlotId <= 0) throw new ArgumentException("Invalid PublishedSlotId.");

@@ -5,15 +5,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CareSchedule.Repositories.Implementation
 {
-    public class RoomRepository : IRoomRepository
+    public class RoomRepository(CareScheduleContext _db) : IRoomRepository
     {
-        private readonly CareScheduleContext _db;
-
-        public RoomRepository(CareScheduleContext db)
-        {
-            _db = db;
-        }
-
         public (List<Room> Items, int Total) Search(
             string? roomName,
             string? roomType,

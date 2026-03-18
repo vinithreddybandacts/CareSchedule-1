@@ -7,15 +7,8 @@ using CareSchedule.Repositories.Interface;
 
 namespace CareSchedule.Repositories.Implementation
 {
-    public class PublishedSlotRepository : IPublishedSlotRepository
+    public class PublishedSlotRepository(CareScheduleContext _db) : IPublishedSlotRepository
     {
-        private readonly CareScheduleContext _db;
-
-        public PublishedSlotRepository(CareScheduleContext db)
-        {
-            _db = db;
-        }
-
         public IEnumerable<PublishedSlot> GetOpenSlots(int providerId, int serviceId, int siteId, DateOnly date)
         {
             return _db.PublishedSlots

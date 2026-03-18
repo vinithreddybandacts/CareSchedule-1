@@ -7,33 +7,26 @@ namespace CareSchedule.API.Controllers
 {
     [ApiController]
     [Route("leave")]
-    public class LeaveController : ControllerBase
+    public class LeaveController(ILeaveService _leaveservice) : ControllerBase
     {
-        private readonly ILeaveService _service;
-
-        public LeaveController(ILeaveService service)
-        {
-            _service = service;
-        }
-
         [HttpGet]
         public ActionResult<ApiResponse<IEnumerable<LeaveRequestResponseDto>>> Search([FromQuery] LeaveSearchDto dto)
         {
-            var list = _service.Search(dto);
+            var list = _leaveservice.Search(dto);
             return ApiResponse<IEnumerable<LeaveRequestResponseDto>>.Ok(list, "Leave requests fetched.");
         }
 
         [HttpPatch("{leaveId:int}/approve")]
         public ActionResult<ApiResponse<LeaveRequestResponseDto>> Approve(int leaveId)
         {
-            var result = _service.Approve(leaveId);
+            var result = _leaveservice.Approve(leaveId);
             return ApiResponse<LeaveRequestResponseDto>.Ok(result, "Leave approved.");
         }
 
         [HttpPatch("{leaveId:int}/reject")]
         public ActionResult<ApiResponse<LeaveRequestResponseDto>> Reject(int leaveId)
         {
-            var result = _service.Reject(leaveId);
+            var result = _leaveservice.Reject(leaveId);
             return ApiResponse<LeaveRequestResponseDto>.Ok(result, "Leave rejected.");
         }
     }

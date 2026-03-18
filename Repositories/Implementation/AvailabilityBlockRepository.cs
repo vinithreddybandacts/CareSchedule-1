@@ -7,15 +7,8 @@ using CareSchedule.Repositories.Interface;
 
 namespace CareSchedule.Repositories.Implementation
 {
-    public class AvailabilityBlockRepository : IAvailabilityBlockRepository
+    public class AvailabilityBlockRepository(CareScheduleContext _db) : IAvailabilityBlockRepository
     {
-        private readonly CareScheduleContext _db;
-
-        public AvailabilityBlockRepository(CareScheduleContext db)
-        {
-            _db = db;
-        }
-
         public void Add(AvailabilityBlock entity)
         {
             _db.AvailabilityBlocks.Add(entity);

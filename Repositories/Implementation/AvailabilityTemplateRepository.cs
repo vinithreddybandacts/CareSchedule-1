@@ -6,15 +6,8 @@ using CareSchedule.Repositories.Interface;
 
 namespace CareSchedule.Repositories.Implementation
 {
-    public class AvailabilityTemplateRepository : IAvailabilityTemplateRepository
+    public class AvailabilityTemplateRepository(CareScheduleContext _db) : IAvailabilityTemplateRepository
     {
-        private readonly CareScheduleContext _db;
-
-        public AvailabilityTemplateRepository(CareScheduleContext db)
-        {
-            _db = db;
-        }
-
         public void Add(AvailabilityTemplate entity)
         {
             _db.AvailabilityTemplates.Add(entity);

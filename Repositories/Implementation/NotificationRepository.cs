@@ -7,11 +7,8 @@ using CareSchedule.Repositories.Interface;
 
 namespace CareSchedule.Repositories.Implementation
 {
-    public class NotificationRepository : INotificationRepository
+    public class NotificationRepository(CareScheduleContext _db) : INotificationRepository
     {
-        private readonly CareScheduleContext _db;
-        public NotificationRepository(CareScheduleContext db) { _db = db; }
-
         public void Add(Notification entity) => _db.Notifications.Add(entity);
 
         public Notification? GetById(int notificationId)

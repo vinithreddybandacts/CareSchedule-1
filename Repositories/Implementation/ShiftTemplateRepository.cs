@@ -7,15 +7,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CareSchedule.Repositories.Implementation
 {
-    public class ShiftTemplateRepository : IShiftTemplateRepository
+    public class ShiftTemplateRepository(CareScheduleContext _db) : IShiftTemplateRepository
     {
-        private readonly CareScheduleContext _db;
-
-        public ShiftTemplateRepository(CareScheduleContext db)
-        {
-            _db = db;
-        }
-
         public void Add(ShiftTemplate entity)
         {
             _db.ShiftTemplates.Add(entity);

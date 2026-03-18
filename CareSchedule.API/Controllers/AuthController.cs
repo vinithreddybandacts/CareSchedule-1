@@ -7,15 +7,8 @@ namespace CareSchedule.API.Controllers
 {
     [ApiController]
     [Route("auth")]
-    public class AuthController : ControllerBase
+    public class AuthController(IAuthService _authService) : ControllerBase
     {
-        private readonly IAuthService _authService;
-
-        public AuthController(IAuthService authService)
-        {
-            _authService = authService;
-        }
-
         // POST /auth/login
         [HttpPost("login")]
         public ActionResult<ApiResponse<LoginResponseDto>> Login([FromBody] LoginRequestDto dto)

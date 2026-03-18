@@ -7,24 +7,21 @@ namespace CareSchedule.API.Controllers
 {
     [ApiController]
     [Route("api/iam/users")]
-    public class UsersController : ControllerBase
+    public class UsersController(IUserService _userservice) : ControllerBase
     {
-        private readonly IUserService _service;
-        public UsersController(IUserService service) => _service = service;
-
         [HttpGet]
         public IActionResult Search([FromQuery] UserSearchQuery q)
-            => Ok(ApiResponse<object>.Ok(_service.SearchUser(q)));
+            => Ok(ApiResponse<object>.Ok(_userservice.SearchUser(q)));
 
         [HttpGet("{id:int}")]
         public ActionResult<ApiResponse<UserDto>> Get(int id)
-            => Ok(ApiResponse<UserDto>.Ok(_service.GetUser(id)));
+            => Ok(ApiResponse<UserDto>.Ok(_userservice.GetUser(id)));
 
         [HttpPost]
         public ActionResult<ApiResponse<UserDto>> Create([FromBody] UserCreateDto dto)
         {
             if (dto is null) return BadRequest(ApiResponse<object>.Fail(new { code = "BAD_REQUEST" }, "Request body is required."));
-            var created = _service.CreateUser(dto);
+            var created = _userservice.CreateUser(dto);
             return CreatedAtAction(nameof(Get), new { id = created.UserId }, ApiResponse<UserDto>.Ok(created, "User created."));
         }
 
@@ -32,41 +29,41 @@ namespace CareSchedule.API.Controllers
         public ActionResult<ApiResponse<UserDto>> Update(int id, [FromBody] UserUpdateDto dto)
         {
             if (dto is null) return BadRequest(ApiResponse<object>.Fail(new { code = "BAD_REQUEST" }, "Request body is required."));
-            return Ok(ApiResponse<UserDto>.Ok(_service.UpdateUser(id, dto), "User updated."));
+            return Ok(ApiResponse<UserDto>.Ok(_userservice.UpdateUser(id, dto), "User updated."));
         }
 
         [HttpDelete("{id:int}")]
         public ActionResult<ApiResponse<object>> Deactivate(int id)
         {
-            _service.DeactivateUser(id);
+            _userservice.DeactivateUser(id);
             return Ok(ApiResponse<object>.Ok(new { id }, "User deactivated."));
         }
 
         [HttpPost("{id:int}/activate")]
         public ActionResult<ApiResponse<object>> Activate(int id)
         {
-            _service.ActivateUser(id);
+            _userservice.ActivateUser(id);
             return Ok(ApiResponse<object>.Ok(new { id }, "User activated."));
         }
 
          [HttpPatch("{id:int}/lock")]
         public ActionResult<ApiResponse<object>> Lock(int id)
         {
-            _service.LockUser(id);
+            _userservice.LockUser(id);
             return Ok(ApiResponse<object>.Ok(new { id }, "User locked."));
         }
 
         [HttpPatch("{id:int}/unlock")]
         public ActionResult<ApiResponse<object>> Unlock(int id)
         {
-            _service.UnlockUser(id);
+            _userservice.UnlockUser(id);
             return Ok(ApiResponse<object>.Ok(new { id }, "User unlocked."));
         }
 
         [HttpPatch("{id:int}/reset-password")]
         public ActionResult<ApiResponse<object>> ResetPassword(int id)
         {
-            _service.ResetPassword(id);
+            _userservice.ResetPassword(id);
             return Ok(ApiResponse<object>.Ok(new { id }, "Password reset."));
         }
     }

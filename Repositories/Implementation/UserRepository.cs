@@ -6,15 +6,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CareSchedule.Repositories.Implementation
 {
-    public class UserRepository : IUserRepository
+    public class UserRepository(CareScheduleContext _db) : IUserRepository
     {
-        private readonly CareScheduleContext _db;
-
-        public UserRepository(CareScheduleContext db)
-        {
-            _db = db;
-        }
-
         public User? GetByEmail(string email, string role)
         {
             // Email is UNIQUE by schema

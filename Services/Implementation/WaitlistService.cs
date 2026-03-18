@@ -10,25 +10,12 @@ using CareSchedule.Services.Interface;
 
 namespace CareSchedule.Services.Implementation
 {
-    public class WaitlistService : IWaitlistService
+    public class WaitlistService(
+            IWaitlistRepository _waitlistRepo,
+            IBookingService _bookingService,
+            IAuditLogService _auditService,
+            IUnitOfWork _uow) : IWaitlistService
     {
-        private readonly IWaitlistRepository _waitlistRepo;
-        private readonly IBookingService _bookingService;
-        private readonly IAuditLogService _auditService;
-        private readonly IUnitOfWork _uow;
-
-        public WaitlistService(
-            IWaitlistRepository waitlistRepo,
-            IBookingService bookingService,
-            IAuditLogService auditService,
-            IUnitOfWork uow)
-        {
-            _waitlistRepo = waitlistRepo;
-            _bookingService = bookingService;
-            _auditService = auditService;
-            _uow = uow;
-        }
-
         public WaitlistResponseDto Add(CreateWaitlistRequestDto dto)
         {
             if (dto.SiteId <= 0) throw new ArgumentException("SiteId is required.");

@@ -5,15 +5,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CareSchedule.Repositories.Implementation
 {
-    public class AuditLogRepository : IAuditLogRepository
+    public class AuditLogRepository(CareScheduleContext _db) : IAuditLogRepository
     {
-        private readonly CareScheduleContext _db;
-
-        public AuditLogRepository(CareScheduleContext db)
-        {
-            _db = db;
-        }
-
         public (List<AuditLog> Items, int Total) Search(
             int? userId,
             string? action,

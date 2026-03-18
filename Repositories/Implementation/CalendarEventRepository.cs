@@ -7,15 +7,8 @@ using CareSchedule.Infrastructure.Data;
 
 namespace CareSchedule.Repositories.Implementation
 {
-    public class CalendarEventRepository : ICalendarEventRepository
+    public class CalendarEventRepository(CareScheduleContext _db) : ICalendarEventRepository
     {
-        private readonly CareScheduleContext _db;
-
-        public CalendarEventRepository(CareScheduleContext db)
-        {
-            _db = db;
-        }
-
         public void Add(CalendarEvent entity)
         {
             _db.CalendarEvents.Add(entity);

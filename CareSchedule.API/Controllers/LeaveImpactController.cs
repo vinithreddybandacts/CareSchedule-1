@@ -7,26 +7,19 @@ namespace CareSchedule.API.Controllers
 {
     [ApiController]
     [Route("leave-impact")]
-    public class LeaveImpactController : ControllerBase
+    public class LeaveImpactController(ILeaveService _leaveservice) : ControllerBase
     {
-        private readonly ILeaveService _service;
-
-        public LeaveImpactController(ILeaveService service)
-        {
-            _service = service;
-        }
-
         [HttpPost]
         public ActionResult<ApiResponse<LeaveImpactResponseDto>> Create([FromBody] CreateLeaveImpactDto dto)
         {
-            var result = _service.CreateImpact(dto);
+            var result = _leaveservice.CreateImpact(dto);
             return ApiResponse<LeaveImpactResponseDto>.Ok(result, "Leave impact created.");
         }
 
         [HttpPatch("{impactId:int}/resolve")]
         public ActionResult<ApiResponse<LeaveImpactResponseDto>> Resolve(int impactId, [FromBody] ResolveLeaveImpactDto dto)
         {
-            var result = _service.ResolveImpact(impactId, dto);
+            var result = _leaveservice.ResolveImpact(impactId, dto);
             return ApiResponse<LeaveImpactResponseDto>.Ok(result, "Leave impact resolved.");
         }
     }

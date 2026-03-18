@@ -8,19 +8,12 @@ namespace CareSchedule.API.Controllers
     [ApiController]
     [Route("api/masterdata")]
     [Produces("application/json")]
-    public class ProviderServicesController : ControllerBase
+    public class ProviderServicesController(IProviderServiceMappingService _mappingservice) : ControllerBase
     {
-        private readonly IProviderServiceMappingService _service;
-
-        public ProviderServicesController(IProviderServiceMappingService service)
-        {
-            _service = service;
-        }
-
         [HttpPost("provider-services")]
         public IActionResult Assign([FromBody] ProviderServiceCreateDto dto)
         {
-            var created = _service.AssignServiceToProvider(dto);
+            var created = _mappingservice.AssignServiceToProvider(dto);
             return CreatedAtAction(nameof(GetServicesByProvider), new { providerId = created.ProviderId },
                 ApiResponse<ProviderServiceDto>.Ok(created, "Service assigned to provider."));
         }
@@ -28,21 +21,21 @@ namespace CareSchedule.API.Controllers
         [HttpGet("providers/{providerId:int}/services")]
         public IActionResult GetServicesByProvider(int providerId)
         {
-            var items = _service.GetServicesByProvider(providerId);
+            var items = _mappingservice.GetServicesByProvider(providerId);
             return Ok(ApiResponse<object>.Ok(items));
         }
 
         [HttpGet("services/{serviceId:int}/providers")]
         public IActionResult GetProvidersByService(int serviceId)
         {
-            var items = _service.GetProvidersByService(serviceId);
+            var items = _mappingservice.GetProvidersByService(serviceId);
             return Ok(ApiResponse<object>.Ok(items));
         }
 
         [HttpDelete("provider-services/{id:int}")]
         public IActionResult Remove(int id)
         {
-            _service.RemoveMapping(id);
+            _mappingservice.RemoveMapping(id);
             return Ok(ApiResponse<object>.Ok(new { id }, "Mapping removed."));
         }
     }

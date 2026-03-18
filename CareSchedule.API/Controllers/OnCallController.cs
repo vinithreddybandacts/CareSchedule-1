@@ -7,26 +7,19 @@ namespace CareSchedule.API.Controllers
 {
     [ApiController]
     [Route("oncall")]
-    public class OnCallController : ControllerBase
+    public class OnCallController(IRosterService _rosterservice) : ControllerBase
     {
-        private readonly IRosterService _service;
-
-        public OnCallController(IRosterService service)
-        {
-            _service = service;
-        }
-
         [HttpPost]
         public ActionResult<ApiResponse<OnCallResponseDto>> Create([FromBody] CreateOnCallDto dto)
         {
-            var result = _service.CreateOnCall(dto);
+            var result = _rosterservice.CreateOnCall(dto);
             return ApiResponse<OnCallResponseDto>.Ok(result, "On-call coverage created.");
         }
 
         [HttpPut("{id:int}")]
         public ActionResult<ApiResponse<OnCallResponseDto>> Update(int id, [FromBody] UpdateOnCallDto dto)
         {
-            var result = _service.UpdateOnCall(id, dto);
+            var result = _rosterservice.UpdateOnCall(id, dto);
             return ApiResponse<OnCallResponseDto>.Ok(result, "On-call coverage updated.");
         }
     }

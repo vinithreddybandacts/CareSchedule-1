@@ -6,14 +6,11 @@ using System.Collections.Generic;
 
 namespace CareSchedule.Services.Implementation
 {
-    public class UserService : IUserService
+    public class UserService(IUserRepository _userrepo) : IUserService
     {
-        private readonly IUserRepository _repo;
-        public UserService(IUserRepository repo) => _repo = repo;
-
         public List<UserDto> SearchUser(UserSearchQuery q)
         {
-            var (items, _) = _repo.Search(q.Name, q.Role, q.Email, q.Phone, q.Status,
+            var (items, _) = _userrepo.Search(q.Name, q.Role, q.Email, q.Phone, q.Status,
                                           q.Page, q.PageSize, q.SortBy, q.SortDir);
             var list = new List<UserDto>(items.Count);
             foreach (var u in items) list.Add(Map(u));
@@ -22,7 +19,7 @@ namespace CareSchedule.Services.Implementation
 
         public UserDto GetUser(int id)
         {
-            var u = _repo.Get(id);
+            var u = _userrepo.Get(id);
             if (u is null) throw new KeyNotFoundException("User not found.");
             return Map(u);
         }
@@ -41,13 +38,13 @@ namespace CareSchedule.Services.Implementation
                 Phone = string.IsNullOrWhiteSpace(dto.Phone) ? null : dto.Phone.Trim(),
                 Status = "Active"
             };
-            e = _repo.Create(e);
+            e = _userrepo.Create(e);
             return Map(e);
         }
 
         public UserDto UpdateUser(int id, UserUpdateDto dto)
         {
-            var e = _repo.Get(id);
+            var e = _userrepo.Get(id);
             if (e is null) throw new KeyNotFoundException("User not found.");
 
             if (!string.IsNullOrWhiteSpace(dto.Name)) e.Name = dto.Name.Trim();
@@ -55,22 +52,22 @@ namespace CareSchedule.Services.Implementation
             if (!string.IsNullOrWhiteSpace(dto.Email)) e.Email = dto.Email.Trim();
             if (dto.Phone is not null) e.Phone = string.IsNullOrWhiteSpace(dto.Phone) ? null : dto.Phone.Trim();
 
-            _repo.Update(e);
+            _userrepo.Update(e);
             return Map(e);
         }
 
         public void DeactivateUser(int id)
         {
-            var e = _repo.Get(id);
+            var e = _userrepo.Get(id);
             if (e is null) throw new KeyNotFoundException("User not found.");
-            if (e.Status != "Inactive") { e.Status = "Inactive"; _repo.Update(e); }
+            if (e.Status != "Inactive") { e.Status = "Inactive"; _userrepo.Update(e); }
         }
 
         public void ActivateUser(int id)
         {
-            var e = _repo.Get(id);
+            var e = _userrepo.Get(id);
             if (e is null) throw new KeyNotFoundException("User not found.");
-            if (e.Status != "Active") { e.Status = "Active"; _repo.Update(e); }
+            if (e.Status != "Active") { e.Status = "Active"; _userrepo.Update(e); }
         }
 
          public void LockUser(int id)

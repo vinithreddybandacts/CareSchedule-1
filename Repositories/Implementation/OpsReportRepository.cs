@@ -6,15 +6,8 @@ using CareSchedule.Repositories.Interface;
 
 namespace CareSchedule.Repositories.Implementation
 {
-    public class OpsReportRepository : IOpsReportRepository
+    public class OpsReportRepository(CareScheduleContext _db) : IOpsReportRepository
     {
-        private readonly CareScheduleContext _db;
-
-        public OpsReportRepository(CareScheduleContext db)
-        {
-            _db = db;
-        }
-
         public void Add(OpsReport entity)
         {
             throw new NotImplementedException();

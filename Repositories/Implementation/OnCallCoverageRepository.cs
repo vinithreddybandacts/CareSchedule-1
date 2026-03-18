@@ -7,15 +7,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CareSchedule.Repositories.Implementation
 {
-    public class OnCallCoverageRepository : IOnCallCoverageRepository
+    public class OnCallCoverageRepository(CareScheduleContext _db) : IOnCallCoverageRepository
     {
-        private readonly CareScheduleContext _db;
-
-        public OnCallCoverageRepository(CareScheduleContext db)
-        {
-            _db = db;
-        }
-
         public void Add(OnCallCoverage entity)
         {
             _db.OnCallCoverages.Add(entity);

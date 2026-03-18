@@ -7,15 +7,8 @@ namespace CareSchedule.Infrastructure
         int SaveChanges();
     }
 
-    public class UnitOfWork : IUnitOfWork
+    public class UnitOfWork(CareScheduleContext _db) : IUnitOfWork
     {
-        private readonly CareScheduleContext _db;
-
-        public UnitOfWork(CareScheduleContext db)
-        {
-            _db = db;
-        }
-
         public int SaveChanges()
         {
             return _db.SaveChanges();

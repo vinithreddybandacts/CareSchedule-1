@@ -8,20 +8,13 @@ namespace CareSchedule.API.Controllers
     [ApiController]
     [Route("api/admin/holidays")]
     [Produces("application/json")]
-    public class HolidaysController : ControllerBase
+    public class HolidaysController(IHolidayService _holidayservice) : ControllerBase
     {
-        private readonly IHolidayService _service;
-
-        public HolidaysController(IHolidayService service)
-        {
-            _service = service;
-        }
-
         // GET /api/admin/holidays
         [HttpGet]
         public IActionResult Search([FromQuery] HolidaySearchQuery query)
         {
-            var items = _service.SearchHoliday(query);
+            var items = _holidayservice.SearchHoliday(query);
             return Ok(ApiResponse<object>.Ok(items));
         }
 
@@ -29,7 +22,7 @@ namespace CareSchedule.API.Controllers
         [HttpGet("{id:int}")]
         public ActionResult<ApiResponse<HolidayDto>> Get(int id)
         {
-            var holiday = _service.GetHoliday(id);        // throws -> middleware handles
+            var holiday = _holidayservice.GetHoliday(id);        // throws -> middleware handles
             return Ok(ApiResponse<HolidayDto>.Ok(holiday));
         }
 
@@ -37,7 +30,7 @@ namespace CareSchedule.API.Controllers
         [HttpGet("by-date/{siteId:int}/{date}")]
         public ActionResult<ApiResponse<HolidayDto>> GetByDate(int siteId, string date)
         {
-            var holiday = _service.GetHolidayByDate(siteId, date);  // throws -> middleware handles
+            var holiday = _holidayservice.GetHolidayByDate(siteId, date);  // throws -> middleware handles
             return Ok(ApiResponse<HolidayDto>.Ok(holiday));
         }
 
@@ -48,7 +41,7 @@ namespace CareSchedule.API.Controllers
             if (dto is null)
                 return BadRequest(ApiResponse<object>.Fail(new { code = "BAD_REQUEST" }, "Request body is required."));
 
-            var created = _service.CreateHoliday(dto);    // throws -> middleware handles
+            var created = _holidayservice.CreateHoliday(dto);    // throws -> middleware handles
             return CreatedAtAction(nameof(Get), new { id = created.HolidayId },
                 ApiResponse<HolidayDto>.Ok(created, "Holiday created."));
         }
@@ -60,7 +53,7 @@ namespace CareSchedule.API.Controllers
             if (dto is null)
                 return BadRequest(ApiResponse<object>.Fail(new { code = "BAD_REQUEST" }, "Request body is required."));
 
-            var updated = _service.UpdateHoliday(id, dto);  // throws -> middleware handles
+            var updated = _holidayservice.UpdateHoliday(id, dto);  // throws -> middleware handles
             return Ok(ApiResponse<HolidayDto>.Ok(updated, "Holiday updated."));
         }
 
@@ -68,7 +61,7 @@ namespace CareSchedule.API.Controllers
         [HttpDelete("{id:int}")]
         public ActionResult<ApiResponse<object>> Deactivate(int id)
         {
-            _service.DeactivateHoliday(id);  // throws -> middleware handles
+            _holidayservice.DeactivateHoliday(id);  // throws -> middleware handles
             return Ok(ApiResponse<object>.Ok(new { id }, "Holiday deactivated."));
         }
 
@@ -76,7 +69,7 @@ namespace CareSchedule.API.Controllers
         [HttpPost("{id:int}/activate")]
         public ActionResult<ApiResponse<object>> Activate(int id)
         {
-            _service.ActivateHoliday(id);    // throws -> middleware handles
+            _holidayservice.ActivateHoliday(id);    // throws -> middleware handles
             return Ok(ApiResponse<object>.Ok(new { id }, "Holiday activated."));
         }
     }

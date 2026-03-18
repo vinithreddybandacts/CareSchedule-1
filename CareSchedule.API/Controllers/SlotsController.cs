@@ -7,20 +7,13 @@ namespace CareSchedule.API.Controllers
 {
     [ApiController]
     [Route("slots")]
-    public class SlotsController : ControllerBase
+    public class SlotsController(IAvailabilityService _availabilityservice) : ControllerBase
     {
-        private readonly IAvailabilityService _availability;
-
-        public SlotsController(IAvailabilityService availability)
-        {
-            _availability = availability;
-        }
-
         // GET /slots?providerId=&serviceId=&siteId=&date=YYYY-MM-DD
         [HttpGet]
         public ActionResult<ApiResponse<IEnumerable<SlotResponseDto>>> Get([FromQuery] int providerId, [FromQuery] int serviceId, [FromQuery] int siteId, [FromQuery] string date)
         {
-            var data = _availability.GetOpenSlots(new SlotSearchRequestDto
+            var data = _availabilityservice.GetOpenSlots(new SlotSearchRequestDto
             {
                 ProviderId = providerId,
                 ServiceId = serviceId,

@@ -22,43 +22,19 @@ namespace CareSchedule.Services.Implementation
     /// - Closed slots never reopen
     /// - Controllers remain thin; all logic here
     /// </summary>
-    public class AvailabilityService : IAvailabilityService
+    public class AvailabilityService(
+            IAvailabilityTemplateRepository _templateRepo,
+            IAvailabilityBlockRepository _blockRepo,
+            IPublishedSlotRepository _slotRepo,
+            ICalendarEventRepository _calendarRepo,
+            IAuditLogService _auditService,
+            ISiteRepository _siteRepo,
+            IProviderRepository _providerRepo,
+            IServiceRepository _serviceRepo,
+            IProviderServiceRepository _providerServiceRepo,
+            IUnitOfWork _uow)
+            : IAvailabilityService
     {
-        private readonly IAvailabilityTemplateRepository _templateRepo;
-        private readonly IAvailabilityBlockRepository _blockRepo;
-        private readonly IPublishedSlotRepository _slotRepo;
-        private readonly ICalendarEventRepository _calendarRepo;
-        private readonly IAuditLogService _auditService;
-        private readonly IUnitOfWork _uow;
-        private readonly ISiteRepository _siteRepo;
-        private readonly IProviderRepository _providerRepo;
-        private readonly IServiceRepository _serviceRepo;
-        private readonly IProviderServiceRepository _providerServiceRepo;
-
-        public AvailabilityService(
-            IAvailabilityTemplateRepository templateRepo,
-            IAvailabilityBlockRepository blockRepo,
-            IPublishedSlotRepository slotRepo,
-            ICalendarEventRepository calendarRepo,
-            IAuditLogService auditService,
-            ISiteRepository siteRepo,
-            IProviderRepository providerRepo,
-            IServiceRepository serviceRepo,
-            IProviderServiceRepository providerServiceRepo,
-            IUnitOfWork uow)
-        {
-            _templateRepo  = templateRepo;
-            _blockRepo     = blockRepo;
-            _slotRepo      = slotRepo;
-            _calendarRepo  = calendarRepo;
-            _auditService  = auditService;
-            _uow           = uow;
-            _siteRepo = siteRepo;
-            _providerRepo = providerRepo;
-            _serviceRepo = serviceRepo;
-            _providerServiceRepo = providerServiceRepo;
-        }
-
         public void EnsureSiteActive(int siteId)
         {
             if (siteId <= 0) throw new ArgumentException("Invalid SiteID.");

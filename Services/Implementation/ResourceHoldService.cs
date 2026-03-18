@@ -9,17 +9,8 @@ using CareSchedule.Services.Interface;
 
 namespace CareSchedule.Services.Implementation
 {
-    public class ResourceHoldService : IResourceHoldService
+    public class ResourceHoldService(IResourceHoldRepository _holdRepo, IAuditLogService _auditService) : IResourceHoldService
     {
-        private readonly IResourceHoldRepository _holdRepo;
-        private readonly IAuditLogService _auditService;
-
-        public ResourceHoldService(IResourceHoldRepository holdRepo, IAuditLogService auditService)
-        {
-            _holdRepo = holdRepo;
-            _auditService = auditService;
-        }
-
         public ResourceHoldResponseDto Create(ResourceHoldCreateDto dto)
         {
             if (string.IsNullOrWhiteSpace(dto.ResourceType))

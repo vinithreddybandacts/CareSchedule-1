@@ -7,15 +7,8 @@ using CareSchedule.Repositories.Interface;
 
 namespace CareSchedule.Repositories.Implementation
 {
-    public class ResourceHoldRepository : IResourceHoldRepository
+    public class ResourceHoldRepository(CareScheduleContext _db) : IResourceHoldRepository
     {
-        private readonly CareScheduleContext _db;
-
-        public ResourceHoldRepository(CareScheduleContext db)
-        {
-            _db = db;
-        }
-
         public void Add(ResourceHold entity)
         {
             _db.ResourceHolds.Add(entity);

@@ -6,11 +6,8 @@ using System.Collections.Generic;
 
 namespace CareSchedule.Services.Implementation
 {
-    public class RoomService : IRoomService
+    public class RoomService(IRoomRepository _roomrepo) : IRoomService
     {
-        private readonly IRoomRepository _repo;
-        public RoomService(IRoomRepository repo) => _repo = repo;
-
         public List<RoomDto> SearchRoom(RoomSearchQuery q)
         {
             var page = q.Page <= 0 ? 1 : q.Page;
@@ -18,7 +15,7 @@ namespace CareSchedule.Services.Implementation
             var sortBy = string.IsNullOrWhiteSpace(q.SortBy) ? "roomname" : q.SortBy;
             var sortDir = string.IsNullOrWhiteSpace(q.SortDir) ? "asc" : q.SortDir;
 
-            var (items, _) = _repo.Search(
+            var (items, _) = _roomrepo.Search(
                 roomName: q.RoomName,
                 roomType: null,            // or q.RoomType if you have it in your DTO
                 status: q.Status,
@@ -36,7 +33,7 @@ namespace CareSchedule.Services.Implementation
 
         public RoomDto GetRoom(int id)
         {
-            var r = _repo.Get(id);
+            var r = _roomrepo.Get(id);
             if (r is null) throw new KeyNotFoundException("Room not found.");
             return Map(r);
         }
@@ -54,13 +51,13 @@ namespace CareSchedule.Services.Implementation
                 AttributesJson = dto.AttributesJson,
                 Status = "Active"
             };
-            e = _repo.Create(e);
+            e = _roomrepo.Create(e);
             return Map(e);
         }
 
         public RoomDto UpdateRoom(int id, RoomUpdateDto dto)
         {
-            var e = _repo.Get(id);
+            var e = _roomrepo.Get(id);
             if (e is null) throw new KeyNotFoundException("Room not found.");
 
             if (!string.IsNullOrWhiteSpace(dto.RoomName)) e.RoomName = dto.RoomName.Trim();
@@ -68,22 +65,22 @@ namespace CareSchedule.Services.Implementation
             if (dto.SiteId.HasValue) e.SiteId = dto.SiteId.Value;
             if (dto.AttributesJson is not null) e.AttributesJson = dto.AttributesJson;
 
-            _repo.Update(e);
+            _roomrepo.Update(e);
             return Map(e);
         }
 
         public void DeactivateRoom(int id)
         {
-            var e = _repo.Get(id);
+            var e = _roomrepo.Get(id);
             if (e is null) throw new KeyNotFoundException("Room not found.");
-            if (e.Status != "Inactive") { e.Status = "Inactive"; _repo.Update(e); }
+            if (e.Status != "Inactive") { e.Status = "Inactive"; _roomrepo.Update(e); }
         }
 
         public void ActivateRoom(int id)
         {
-            var e = _repo.Get(id);
+            var e = _roomrepo.Get(id);
             if (e is null) throw new KeyNotFoundException("Room not found.");
-            if (e.Status != "Active") { e.Status = "Active"; _repo.Update(e); }
+            if (e.Status != "Active") { e.Status = "Active"; _roomrepo.Update(e); }
         }
 
         private static RoomDto Map(Room r) => new()

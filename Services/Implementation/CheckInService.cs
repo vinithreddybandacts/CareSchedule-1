@@ -9,28 +9,13 @@ using CareSchedule.Services.Interface;
 
 namespace CareSchedule.Services.Implementation
 {
-    public class CheckInService : ICheckInService
+    public class CheckInService(
+            ICheckInRepository _checkInRepo,
+            IAppointmentRepository _apptRepo,
+            INotificationRepository _notifRepo,
+            IAuditLogService _auditService,
+            IUnitOfWork _uow) : ICheckInService
     {
-        private readonly ICheckInRepository _checkInRepo;
-        private readonly IAppointmentRepository _apptRepo;
-        private readonly INotificationRepository _notifRepo;
-        private readonly IAuditLogService _auditService;
-        private readonly IUnitOfWork _uow;
-
-        public CheckInService(
-            ICheckInRepository checkInRepo,
-            IAppointmentRepository apptRepo,
-            INotificationRepository notifRepo,
-            IAuditLogService auditService,
-            IUnitOfWork uow)
-        {
-            _checkInRepo = checkInRepo;
-            _apptRepo = apptRepo;
-            _notifRepo = notifRepo;
-            _auditService = auditService;
-            _uow = uow;
-        }
-
         public CheckInResponseDto CheckIn(int appointmentId, CreateCheckInRequestDto dto)
         {
             if (appointmentId <= 0) throw new ArgumentException("Invalid appointmentId.");

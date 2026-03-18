@@ -7,15 +7,8 @@ namespace CareSchedule.API.Controllers
 {
     [ApiController]
     [Route("calendar")]
-    public class CalendarController : ControllerBase
+    public class CalendarController(ICalendarService _calenderservice) : ControllerBase
     {
-        private readonly ICalendarService _service;
-
-        public CalendarController(ICalendarService service)
-        {
-            _service = service;
-        }
-
         [HttpGet]
         public ActionResult<ApiResponse<IEnumerable<CalendarEventResponseDto>>> Get(
             [FromQuery] int? providerId,
@@ -24,13 +17,13 @@ namespace CareSchedule.API.Controllers
         {
             if (providerId.HasValue)
             {
-                var list = _service.GetByProvider(providerId.Value, date ?? "");
+                var list = _calenderservice.GetByProvider(providerId.Value, date ?? "");
                 return ApiResponse<IEnumerable<CalendarEventResponseDto>>.Ok(list, "Calendar events fetched.");
             }
 
             if (siteId.HasValue)
             {
-                var list = _service.GetBySite(siteId.Value, date ?? "");
+                var list = _calenderservice.GetBySite(siteId.Value, date ?? "");
                 return ApiResponse<IEnumerable<CalendarEventResponseDto>>.Ok(list, "Calendar events fetched.");
             }
 

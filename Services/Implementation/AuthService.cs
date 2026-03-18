@@ -7,19 +7,8 @@ using CareSchedule.Repositories.Interface;
 
 namespace CareSchedule.Services.Implementation
 {
-    public class AuthService : IAuthService
+    public class AuthService(IUserRepository _userRepo, IAuditLogService _auditService) : IAuthService
     {
-        private readonly IUserRepository _userRepo;
-        private readonly IAuditLogService _auditService;
-        private readonly IUnitOfWork _uow;
-
-        public AuthService(IUserRepository userRepo, IAuditLogService auditService, IUnitOfWork uow)
-        {
-            _userRepo = userRepo;
-            _auditService = auditService;
-            _uow = uow;
-        }
-
         private static readonly string[] AllowedRoles = new[]
         {
             "Patient", "FrontDesk", "Provider", "Nurse", "Tech", "Operations", "Admin"

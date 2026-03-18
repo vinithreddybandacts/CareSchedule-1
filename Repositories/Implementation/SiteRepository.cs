@@ -5,15 +5,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CareSchedule.Repositories.Implementation
 {
-    public class SiteRepository : ISiteRepository
+    public class SiteRepository(CareScheduleContext _db) : ISiteRepository
     {
-        private readonly CareScheduleContext _db;
-
-        public SiteRepository(CareScheduleContext db)
-        {
-            _db = db;
-        }
-
         public (List<Site> Items, int Total) Search(
             string? name, string? status,
             int page, int pageSize,

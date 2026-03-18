@@ -7,15 +7,8 @@ using CareSchedule.Repositories.Interface;
 
 namespace CareSchedule.Repositories.Implementation
 {
-    public class OutcomeRepository : IOutcomeRepository
+    public class OutcomeRepository(CareScheduleContext _db) : IOutcomeRepository
     {
-        private readonly CareScheduleContext _db;
-
-        public OutcomeRepository(CareScheduleContext db)
-        {
-            _db = db;
-        }
-
         public void Add(Outcome entity)
         {
             _db.Outcomes.Add(entity);
