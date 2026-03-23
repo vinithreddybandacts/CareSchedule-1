@@ -39,7 +39,7 @@ namespace CareSchedule.Services.Implementation
                 PatientId = dto.PatientId,
                 Priority = string.IsNullOrWhiteSpace(dto.Priority) ? "Normal" : dto.Priority.Trim(),
                 RequestedDate = reqDate,
-                Status = "Waiting"
+                Status = "Open"
             };
 
             _waitlistRepo.Add(entity);
